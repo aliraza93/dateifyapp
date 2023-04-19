@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('is_approved')->default(0);
             $table->string('flag_description')->nullable();
             $table->string('flag_icons')->nullable();
-            $table->longText('post_description')->nullable();
+            $table->longText('description')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->timestamps();

@@ -22,7 +22,7 @@ class PostController extends ApiController
             'is_anonymous'              => 'required|boolean',
             'flag_description'          => 'nullable',
             'flag_icons'                => 'nullable',
-            'post_description'          => 'nullable',
+            'description'               => 'nullable',
             'group_id'                  => 'required',
             
         ]);
@@ -49,7 +49,7 @@ class PostController extends ApiController
             $newpost->is_anonymous = $request->is_anonymous;              
             $newpost->flag_description = $request->flag_description;          
             $newpost->flag_icons = $request->flag_icons;                
-            $newpost->post_description = $request->post_description;          
+            $newpost->description = $request->description;          
             $newpost->group_id = $request->group_id;   
             $newpost->user_id  = $user->id;
             $newpost->save();  

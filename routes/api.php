@@ -45,14 +45,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
     
     
     Route::prefix('posts')->group(function () { 
-        Route::post('new', [PostController::class, 'new_post']);
+        Route::post('create', [PostController::class, 'new_post']);
         Route::get('list', [PostController::class, 'group_posts_list']);
     }); 
 
-    Route::prefix('group')->group(function () { 
+    Route::prefix('groups')->group(function () { 
         
-        Route::post('new', [GroupController::class, 'new_group']);
-        Route::post('add-participent', [GroupController::class, 'add_participents']);
+        Route::post('create', [GroupController::class, 'new_group']);
+        Route::post('add-participant', [GroupController::class, 'add_participants']);
     });    
 });
 });

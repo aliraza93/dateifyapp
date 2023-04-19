@@ -30,7 +30,12 @@ class GroupController extends ApiController
             
             $newpost = new Group();
             $newpost->name = $request->name;                   
-            $newpost->save();               
+            $newpost->save(); 
+            if ($images = $request->file('images')) {
+                foreach ($images as $image) {
+                    $newpost->addMedia($image)->toMediaCollection('group_image');
+                }             
+            }              
             return $this->SuccessResponse('Added Succesfully.', null);
             
         } catch (\Exception $e) {
@@ -38,7 +43,7 @@ class GroupController extends ApiController
         }
     }
 
-    public function add_participents(Request $request)
+    public function add_participants(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'group_id'                   => 'required',            
@@ -65,6 +70,29 @@ class GroupController extends ApiController
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
+    }
+
+    public function group_image(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'group_id'                   => 'required',            
+            
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+        try{
+            
+        $group = GroupUser::where('group_id', $request->group_id)->first();
+        if ($images = $request->file('images')) {
+            foreach ($images as $image) {
+                $group->addMedia($image)->toMediaCollection('group_image');
+            }             
+        }
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+
     }
 
      
