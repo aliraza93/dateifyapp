@@ -50,7 +50,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
     }); 
 
     Route::prefix('group')->group(function () { 
+        
         Route::post('new', [GroupController::class, 'new_group']);
+        Route::post('add-participent', [GroupController::class, 'add_participents']);
     });    
 });
 });
