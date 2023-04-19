@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\GroupController;
+use App\Http\Controllers\Api\V1\PostController;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,5 +42,15 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
-    });
+    
+    
+    Route::prefix('posts')->group(function () { 
+        Route::post('new', [PostController::class, 'new_post']);
+        Route::get('list', [PostController::class, 'group_posts_list']);
+    }); 
+
+    Route::prefix('group')->group(function () { 
+        Route::post('new', [GroupController::class, 'new_group']);
+    });    
+});
 });
