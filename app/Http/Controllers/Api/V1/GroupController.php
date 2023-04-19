@@ -37,7 +37,9 @@ class GroupController extends ApiController
             if ($image) {
                 $newGroup->addMedia($image)->toMediaCollection('group_images');          
             }              
-            return $this->SuccessResponse('Added Succesfully.', null);
+            return $this->SuccessResponse('Added Succesfully.', [
+                'group' => $newGroup
+            ]);
             
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
@@ -66,7 +68,9 @@ class GroupController extends ApiController
             $newUser->group_id = $request->group_id;                   
             $newUser->user_id = $request->user_id;                   
             $newUser->save();               
-            return $this->SuccessResponse('Added Succesfully.', null);
+            return $this->SuccessResponse('Added Succesfully.', [
+                'groupUser' => $newUser
+            ]);
             
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);

@@ -58,7 +58,9 @@ class PostController extends ApiController
                     $newpost->addMedia($image)->toMediaCollection('post_images');
                 }
             }
-            return $this->SuccessResponse('Added Succesfully.', null);
+            return $this->SuccessResponse('Added Succesfully.', [
+                'post' => $newpost
+            ]);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
