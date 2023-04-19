@@ -127,4 +127,9 @@ class User extends Authenticatable implements HasMedia
         }
         return $images;
     }
+
+    public function group_users()
+    {
+        return $this->hasMany(GroupUser::class);
+    }
 }
