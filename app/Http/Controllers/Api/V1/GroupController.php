@@ -11,10 +11,11 @@ use PhpParser\Node\Stmt\GroupUse;
 
 class GroupController extends ApiController
 {
-    public function new_group(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'                   => 'required|string'            
+            'name' => 'required|string',
+            'image' => 'required'            
         ]);
 
         if ($validator->fails()) {
@@ -24,17 +25,17 @@ class GroupController extends ApiController
         try {
             
             $group = Group::where('name', $request->name)->first();
+            
             if ($group) {
-                return $this->ErrorResponse('Already exhist this name group', null, null);
+                return $this->ErrorResponse('Group with this name already exists!', null, null);
             }
             
-            $newpost = new Group();
-            $newpost->name = $request->name;                   
-            $newpost->save(); 
-            if ($images = $request->file('images')) {
-                foreach ($images as $image) {
-                    $newpost->addMedia($image)->toMediaCollection('group_image');
-                }             
+            $newGroup = new Group();
+            $newGroup->name = $request->name;                   
+            $newGroup->save(); 
+            $image = $request->file('image');
+            if ($image) {
+                $newGroup->addMedia($image)->toMediaCollection('group_images');          
             }              
             return $this->SuccessResponse('Added Succesfully.', null);
             
@@ -43,11 +44,11 @@ class GroupController extends ApiController
         }
     }
 
-    public function add_participants(Request $request)
+    public function addParticipant(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'group_id'                   => 'required',            
-            'user_id'                   => 'required'            
+            'group_id' => 'required',            
+            'user_id'  => 'required'            
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +59,7 @@ class GroupController extends ApiController
             
             $group = GroupUser::where('group_id', $request->group_id)->where('user_id', $request->user_id)->first();
             if ($group) {
-                return $this->ErrorResponse('Already exhist', null, null);
+                return $this->ErrorResponse('User is already added in this group!', null, null);
             }
             
             $newUser = new GroupUser();
@@ -71,29 +72,5 @@ class GroupController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
-
-    public function group_image(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'group_id'                   => 'required',            
-            
-        ]);
-
-        if ($validator->fails()) {
-            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
-        }
-        try{
-            
-        $group = GroupUser::where('group_id', $request->group_id)->first();
-        if ($images = $request->file('images')) {
-            foreach ($images as $image) {
-                $group->addMedia($image)->toMediaCollection('group_image');
-            }             
-        }
-        } catch (\Exception $e) {
-            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
-        }
-
-    }
-
      
 }   

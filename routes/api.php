@@ -42,17 +42,16 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
-    
-    
-    Route::prefix('posts')->group(function () { 
-        Route::post('create', [PostController::class, 'new_post']);
-        Route::get('list', [PostController::class, 'group_posts_list']);
-    }); 
 
-    Route::prefix('groups')->group(function () { 
-        
-        Route::post('create', [GroupController::class, 'new_group']);
-        Route::post('add-participant', [GroupController::class, 'add_participants']);
-    });    
-});
+
+        Route::prefix('posts')->group(function () {
+            Route::post('create', [PostController::class, 'store']);
+            Route::get('list', [PostController::class, 'list']);
+        });
+
+        Route::prefix('groups')->group(function () {
+            Route::post('create', [GroupController::class, 'store']);
+            Route::post('add-participant', [GroupController::class, 'addParticipant']);
+        });
+    });
 });
