@@ -70,7 +70,7 @@ class PostController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'group_id' => 'required',
-            'limit' => 'required|numeric'
+            'limit' => 'nullable|numeric'
         ]);
 
         if ($validator->fails()) {
@@ -83,7 +83,7 @@ class PostController extends ApiController
         }
 
         $limit = $request->limit ? $request->limit : 20;
-        
+
         // Get posts
         $posts = $group->posts()->paginate($limit);
 
