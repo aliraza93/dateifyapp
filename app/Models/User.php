@@ -34,6 +34,7 @@ class User extends Authenticatable implements HasMedia
     protected $hidden = [
         'password',
         'remember_token',
+        'media',
     ];
 
     /**
@@ -128,8 +129,8 @@ class User extends Authenticatable implements HasMedia
         return $images;
     }
 
-    public function group_users()
+    public function groups()
     {
-        return $this->hasMany(GroupUser::class);
+        return $this->belongsToMany(Group::class, 'group_users');
     }
 }

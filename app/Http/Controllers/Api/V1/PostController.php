@@ -70,21 +70,27 @@ class PostController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'group_id' => 'required',
-
+            'limit' => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
 
-        $group = Group::find($request->group_id)->posts;
+        $group = Group::find($request->group_id);
         if (!$group) {
             return $this->ErrorResponse('No group record found in our database. Please try again', null, null);
         }
-        $data = new Paginator($group, 20);
-        $data = $data->setPath(url()->current());
+
+        $limit = $request->limit ? $request->limit : 20;
+        
+        // Get posts
+        $posts = $group->posts()->paginate($limit);
+
+        // $data = new Paginator($group, 20);
+        // $data = $data->setPath(url()->current());
         return $this->SuccessResponse($this->dataRetrieved, [
-            'posts' => $data
+            'posts' => $posts
         ]);
     }
 }

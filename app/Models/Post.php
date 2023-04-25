@@ -13,6 +13,15 @@ class Post extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
     protected $guarded  = [];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'media',
+    ];
+
     public function groups()
     {
         return $this->belongsTo(Group::class);
@@ -25,10 +34,33 @@ class Post extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $this->addMediaConversion('post_avatar')
+        $this->addMediaConversion('avatar')
             ->width(400)
             ->height(400)
             ->nonOptimized()
             ->performOnCollections('post_images');
+    }
+
+    // get group avatar
+    public function getAvatarAttribute()
+    {
+        $conversionGenerated = $this->getFirstMedia('post_images') ? $this->getFirstMedia('post_images')->hasGeneratedConversion('avatar') : false; // returns true or false
+        if ($conversionGenerated) {
+            return $this->getFirstMediaUrl('post_images', 'avatar');
+        } else {
+            return null;
+        }
+    }
+
+    // Get id and link of images
+    public function getImagesAttribute()
+    {
+        $images = [];
+        if ($this->getMedia('post_images')) {
+            foreach ($this->getMedia('post_images') as $key => $media) {
+                $images[$key] = ['id' => $media->id, 'url' => $media->getUrl(), 'order' => $media->order_column];
+            }
+        }
+        return $images;
     }
 }

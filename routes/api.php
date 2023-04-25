@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,15 +44,34 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
 
-
+        /*
+        |--------------------------------------------------------------------------
+        | Post Routes
+        |--------------------------------------------------------------------------
+        */
         Route::prefix('posts')->group(function () {
             Route::post('create', [PostController::class, 'store']);
             Route::get('list', [PostController::class, 'list']);
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Group Routes
+        |--------------------------------------------------------------------------
+        */
         Route::prefix('groups')->group(function () {
+            Route::get('/', [GroupController::class, 'list']);
             Route::post('create', [GroupController::class, 'store']);
             Route::post('add-participant', [GroupController::class, 'addParticipant']);
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | User Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('user')->group(function () {
+            Route::get('/', [UserController::class, 'show']);
         });
     });
 });

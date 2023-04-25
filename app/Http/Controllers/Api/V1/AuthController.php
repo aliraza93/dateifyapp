@@ -108,11 +108,14 @@ class AuthController extends ApiController
                 $mediaItems = $user->addMedia($file)->toMediaCollection('profile_images');
             }
 
+            $jwt_token = $user->createToken('access-token')->plainTextToken;
+
             return $this->SuccessResponse(
-                'User registered successfully.',
+                'User registered & logged in successfully.',
                 [
                     'user' => $user,
                     'image_url' => $mediaItems->getFullUrl(),
+                    'token' => $jwt_token,
                 ]
             );
         } catch (\Exception $e) {
@@ -223,7 +226,7 @@ class AuthController extends ApiController
 
         //Request is validated, do logout        
         try {
-            $user = Auth::user();
+            $user = User::find(auth()->id());
             $user->tokens()->delete();
             return $this->SuccessResponse('User has been logged out', null);
         } catch (\Exception $e) {
