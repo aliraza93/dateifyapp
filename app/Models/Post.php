@@ -32,12 +32,12 @@ class Post extends Model implements HasMedia
         'images',
     ];
 
-    public function groups()
+    public function group()
     {
         return $this->belongsTo(Group::class);
     }
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }

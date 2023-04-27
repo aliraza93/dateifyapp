@@ -29,7 +29,7 @@ class PostController extends ApiController
         $limit = $request->limit ? $request->limit : 20;
 
         // Get posts
-        $posts = Post::latest()->paginate($limit);
+        $posts = Post::with('user')->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -109,7 +109,7 @@ class PostController extends ApiController
         $limit = $request->limit ? $request->limit : 20;
 
         // Get posts
-        $posts = $group->posts()->paginate($limit);
+        $posts = $group->posts()->with('user')->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());

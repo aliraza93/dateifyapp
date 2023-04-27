@@ -133,4 +133,9 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->belongsToMany(Group::class, 'group_users');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }
