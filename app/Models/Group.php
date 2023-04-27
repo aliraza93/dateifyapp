@@ -22,6 +22,16 @@ class Group extends Model implements HasMedia
         'media',
     ];
 
+        /**
+     * The attributes that should be appended.
+     *
+     * @var array<string, string>
+     */
+    protected $appends = [
+        'avatar',
+        'images',
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'group_users');

@@ -91,7 +91,7 @@ class GroupController extends ApiController
             $user = User::find(auth()->id());
             $groups = $user->groups()->paginate($limit);
             return $this->SuccessResponse($this->dataRetrieved, [
-                'posts' => $groups
+                'groups' => $groups
             ]);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);

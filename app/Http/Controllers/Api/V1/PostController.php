@@ -15,13 +15,37 @@ use Illuminate\Pagination\Paginator;
 
 class PostController extends ApiController
 {
+    // Show all posts
+    public function index(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'limit' => 'nullable|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        $limit = $request->limit ? $request->limit : 20;
+
+        // Get posts
+        $posts = Post::latest()->paginate($limit);
+
+        // $data = new Paginator($group, 20);
+        // $data = $data->setPath(url()->current());
+        return $this->SuccessResponse($this->dataRetrieved, [
+            'posts' => $posts
+        ]);
+    }
+
+    // Add new post
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'is_flag'           => 'required|boolean',
             'is_anonymous'      => 'required|boolean',
             'flag_description'  => 'nullable',
-            'flag_icons'        => 'nullable',
+            'flag_count'        => 'nullable',
             'description'       => 'nullable',
             'group_id'          => 'required',
 
@@ -48,7 +72,7 @@ class PostController extends ApiController
             $newpost->is_flag = $request->is_flag;
             $newpost->is_anonymous = $request->is_anonymous;
             $newpost->flag_description = $request->flag_description;
-            $newpost->flag_icons = $request->flag_icons;
+            $newpost->flag_count = $request->flag_count;
             $newpost->description = $request->description;
             $newpost->group_id = $request->group_id;
             $newpost->user_id  = $user->id;

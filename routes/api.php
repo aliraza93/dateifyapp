@@ -50,6 +50,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         |--------------------------------------------------------------------------
         */
         Route::prefix('posts')->group(function () {
+            Route::get('/', [PostController::class, 'index']);
             Route::post('create', [PostController::class, 'store']);
             Route::get('list', [PostController::class, 'list']);
         });

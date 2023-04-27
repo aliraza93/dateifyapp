@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('is_anonymous')->default(0);
             $table->boolean('is_approved')->default(0);
             $table->string('flag_description')->nullable();
-            $table->string('flag_icons')->nullable();
+            $table->integer('flag_count')->nullable();
             $table->longText('description')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
