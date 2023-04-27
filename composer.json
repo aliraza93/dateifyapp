@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.8",
         "seshac/otp-generator": "^0.0.7",
         "php-ffmpeg/php-ffmpeg": "^1.0",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "pusher/pusher-php-server": "^7.0",
         "twilio/sdk": "^6.41",
         "spatie/laravel-medialibrary": "^10.0.0"
