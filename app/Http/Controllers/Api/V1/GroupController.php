@@ -97,4 +97,29 @@ class GroupController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+
+    public function leave(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'group_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+
+            $group = GroupUser::where('group_id', $request->group_id)->where('user_id', auth()->id())->first();
+            if (!$group) {
+                return $this->ErrorResponse('User is not added in this group!', null, null);
+            }
+
+            $user = User::find(auth()->id());
+            $user->groups()->delete();
+            return $this->SuccessResponse($this->dataDeleted, null);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
 }
