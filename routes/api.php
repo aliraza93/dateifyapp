@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\PostLikesController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Group;
 use Illuminate\Http\Request;
@@ -53,6 +54,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::get('/', [PostController::class, 'index']);
             Route::post('create', [PostController::class, 'store']);
             Route::get('list', [PostController::class, 'list']);
+            Route::post('react', [PostLikesController::class, 'store']);
         });
 
         /*

@@ -138,4 +138,9 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Post::class);
     }
+
+    public function likes()
+    {
+        return $this->hasMany(PostLike::class);
+    }
 }

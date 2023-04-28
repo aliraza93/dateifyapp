@@ -30,6 +30,8 @@ class Post extends Model implements HasMedia
     protected $appends = [
         'avatar',
         'images',
+        'likes_counter',
+        'dislikes_counter',
     ];
 
     public function group()
@@ -72,5 +74,22 @@ class Post extends Model implements HasMedia
             }
         }
         return $images;
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(PostLike::class);
+    }
+
+    public function getLikesCounterAttribute()
+    {
+        $counter = PostLike::where('user_id', auth()->id())->where('post_id', $this->id)->where('is_liked', 1)->count();
+        return $counter;
+    }
+
+    public function getDislikesCounterAttribute()
+    {
+        $counter = PostLike::where('user_id', auth()->id())->where('post_id', $this->id)->where('is_liked', 0)->count();
+        return $counter;
     }
 }
