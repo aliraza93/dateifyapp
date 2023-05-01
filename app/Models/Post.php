@@ -81,6 +81,11 @@ class Post extends Model implements HasMedia
         return $this->hasMany(PostLike::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function getLikesCounterAttribute()
     {
         $counter = PostLike::where('user_id', auth()->id())->where('post_id', $this->id)->where('is_liked', 1)->count();

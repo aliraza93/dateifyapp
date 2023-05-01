@@ -30,6 +30,7 @@ class Group extends Model implements HasMedia
     protected $appends = [
         'avatar',
         'images',
+        'total_members'
     ];
 
     public function users()
@@ -72,6 +73,12 @@ class Group extends Model implements HasMedia
             }
         }
         return $images;
+    }
+
+    // Get total members count
+    public function getTotalMembersAttribute()
+    {
+        return GroupUser::where('group_id', $this->id)->count();
     }
 }
 

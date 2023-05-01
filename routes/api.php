@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostLikesController;
@@ -55,6 +56,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('create', [PostController::class, 'store']);
             Route::get('list', [PostController::class, 'list']);
             Route::post('react', [PostLikesController::class, 'store']);
+        
+            // Comments
+            Route::prefix('comments')->group(function () {
+                Route::get('/', [CommentController::class, 'index']);
+                Route::post('create', [CommentController::class, 'store']);
+            });
         });
 
         /*
