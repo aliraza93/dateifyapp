@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
@@ -48,5 +49,39 @@ class ApiController extends Controller
     public function fallbackResponse()
     {
         return $this->ErrorResponse('Route not found. Please enter valid URL.', null, null);
+    }
+
+    public function generateUsernameSuggestions($baseUsername)
+    {
+        $suggestions = [];
+
+        $randomNumber1 = rand(100, 999);
+        $randomNumber2 = rand(100, 999);
+
+        $suggestionOrder = rand(1, 3); // Randomly decide the order of appending numbers
+
+        if ($suggestionOrder == 1) {
+            $suggestion1 = $baseUsername . '_' . $randomNumber1; // Append random numbers at the end
+            $suggestion2 = $randomNumber2 . '_' . $baseUsername; // Append random numbers at the beginning
+            $suggestion3 = $randomNumber1 . '_' . $baseUsername . '_' . $randomNumber2; // Append random numbers at both ends
+        } elseif ($suggestionOrder == 2) {
+            $suggestion1 = $randomNumber1 . '_' . $baseUsername; // Append random numbers at the beginning
+            $suggestion2 = $baseUsername . '_' . $randomNumber2; // Append random numbers at the end
+            $suggestion3 = $randomNumber1 . '_' . $baseUsername . '_' . $randomNumber2; // Append random numbers at both ends
+        } else {
+            $suggestion1 = $baseUsername . '_' . $randomNumber1 . '_' . $randomNumber2; // Append random numbers at both ends
+            $suggestion2 = $randomNumber1 . '_' . $baseUsername; // Append random numbers at the beginning
+            $suggestion3 = $randomNumber1 . '_' . $baseUsername . '_' . $randomNumber2; // Append random numbers at both ends
+        }
+
+        $suggestions = [$suggestion1, $suggestion2, $suggestion3];
+
+        // Check if the suggestions already exist in the database and remove duplicates
+        $suggestions = array_filter($suggestions, function($suggestion) {
+            $user = User::where('username', $suggestion)->first();
+            return !$user;
+        });
+
+        return array_values($suggestions); // Re-index the array keys
     }
 }

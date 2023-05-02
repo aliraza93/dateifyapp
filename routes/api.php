@@ -38,6 +38,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
     */
     Route::post('register-otp', [AuthController::class, 'registerOtp']);
     Route::post('validate-register-otp', [AuthController::class, 'validateRegisterOtp']);
+    Route::get('validate-username', [AuthController::class, 'validateUsername']);
     Route::post('register', [AuthController::class, 'register']);
 
     Route::post('login', [AuthController::class, 'login']);

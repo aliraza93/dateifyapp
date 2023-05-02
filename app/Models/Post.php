@@ -32,6 +32,8 @@ class Post extends Model implements HasMedia
         'images',
         'likes_counter',
         'dislikes_counter',
+        'reaction_type',
+        'comments_count',
     ];
 
     public function group()
@@ -88,13 +90,34 @@ class Post extends Model implements HasMedia
 
     public function getLikesCounterAttribute()
     {
-        $counter = PostLike::where('user_id', auth()->id())->where('post_id', $this->id)->where('is_liked', 1)->count();
+        $counter = PostLike::where('post_id', $this->id)->where('user_id', auth()->id())->where('is_liked', 1)->count();
         return $counter;
     }
 
     public function getDislikesCounterAttribute()
     {
-        $counter = PostLike::where('user_id', auth()->id())->where('post_id', $this->id)->where('is_liked', 0)->count();
+        $counter = PostLike::where('post_id', $this->id)->where('user_id', auth()->id())->where('is_liked', 0)->count();
+        return $counter;
+    }
+
+    public function getReactionTypeAttribute()
+    {
+        $reaction = PostLike::where('post_id', $this->id)->where('user_id', auth()->id())->select('is_liked')->first();
+        if($reaction != null){
+            if($reaction->is_liked){
+               return 'liked';
+            } else {
+               return 'disliked';
+            }
+       } else {
+           return null;
+       }
+       return null;
+    }
+
+    public function getCommentsCountAttribute()
+    {
+        $counter = $this->comments()->count();
         return $counter;
     }
 }

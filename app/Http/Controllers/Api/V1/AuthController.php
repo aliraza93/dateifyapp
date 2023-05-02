@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Seshac\Otp\Otp;
+use Illuminate\Support\Str;
 
 class AuthController extends ApiController
 {
@@ -24,7 +25,7 @@ class AuthController extends ApiController
         }
 
         try {
-            
+
             // Generate an OTP
             $otp =  Otp::setValidity(5)  // otp validity time in mins
                 ->setLength(4)  // Lenght of the generated otp
@@ -75,6 +76,39 @@ class AuthController extends ApiController
         }
     }
 
+    // Validate Username
+    public function validateUsername(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $username = Str::slug($request->name, '-'); // Convert name to slug format
+
+            // Check if username already exists in the database
+            $user = User::where('username', $username)->first();
+            if (!$user) {
+                $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
+            } else {
+                $suggestions = [];
+            }
+            return $this->SuccessResponse(
+                $this->dataRetrieved,
+                [
+                    'username' => $username,
+                    'suggestions' => $suggestions
+                ]
+            );
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
     // Register user
     public function register(Request $request)
     {
@@ -92,7 +126,7 @@ class AuthController extends ApiController
         }
 
         try {
-            
+
             // Create new user
             $user = new User();
             $user->name = $request->name;
@@ -120,9 +154,9 @@ class AuthController extends ApiController
             );
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
-        }    
+        }
     }
-    
+
     // Validate Login OTP
     public function validateLoginOtp(Request $request)
     {
@@ -182,7 +216,7 @@ class AuthController extends ApiController
         if ($validator->fails()) {
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
-        
+
         try {
             $user = User::where('phone', $request->phone)->first();
             if (!$user) {
@@ -234,11 +268,11 @@ class AuthController extends ApiController
         }
     }
 
-        //Login details of user
-        public function loginDetails($user_id)
-        {
-            Auth::loginUsingId($user_id);
-            $user = User::where('id',  $user_id)->first()->append('images');
-            return $user;
-        }
+    //Login details of user
+    public function loginDetails($user_id)
+    {
+        Auth::loginUsingId($user_id);
+        $user = User::where('id',  $user_id)->first()->append('images');
+        return $user;
+    }
 }
