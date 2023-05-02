@@ -89,18 +89,21 @@ class AuthController extends ApiController
 
         try {
             $username = Str::slug($request->name, '-'); // Convert name to slug format
-
+            $usernameExists = false;
             // Check if username already exists in the database
             $user = User::where('username', $username)->first();
             if (!$user) {
                 $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
+                $usernameExists = false;
             } else {
                 $suggestions = [];
+                $usernameExists = true;
             }
             return $this->SuccessResponse(
                 $this->dataRetrieved,
                 [
                     'username' => $username,
+                    'usernameExists' => $usernameExists,
                     'suggestions' => $suggestions
                 ]
             );
