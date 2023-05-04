@@ -139,8 +139,21 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Post::class);
     }
 
-    public function likes()
+    public function postLikes()
     {
         return $this->hasMany(PostLike::class);
+    }
+
+    /**
+     * The users blocked by the user.
+     */
+    public function blocked_users()
+    {
+        return $this->belongsToMany(BlockUser::class, 'block_users');
+    }
+
+    public function commentLikes()
+    {
+        return $this->hasMany(CommentLike::class);
     }
 }

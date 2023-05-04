@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\BlockUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ApiController extends Controller
 {
@@ -51,6 +53,22 @@ class ApiController extends Controller
         return $this->ErrorResponse('Route not found. Please enter valid URL.', null, null);
     }
 
+    // Get blocked users ids
+    public function blockedUserIds()
+    {
+        $login_id = Auth::id();
+        $block_users = BlockUser::where('user_id', $login_id)->orWhere('blocked_user_id', $login_id)->get();
+        
+        $ids = $block_users->map(function ($item) {
+            if ($item->user_id === auth()->id()) {
+                return $item->blocked_user_id;
+            } else {
+                return $item->user_id;
+            }
+        });
+        return $ids;
+    }
+
     public function generateUsernameSuggestions($baseUsername)
     {
         $suggestions = [];
@@ -77,7 +95,7 @@ class ApiController extends Controller
         $suggestions = [$suggestion1, $suggestion2, $suggestion3];
 
         // Check if the suggestions already exist in the database and remove duplicates
-        $suggestions = array_filter($suggestions, function($suggestion) {
+        $suggestions = array_filter($suggestions, function ($suggestion) {
             $user = User::where('username', $suggestion)->first();
             return !$user;
         });

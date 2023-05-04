@@ -4,13 +4,70 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Comment extends Model
+class Comment extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
     protected $fillable = [
         'body', 'post_id', 'user_id', 'parent_comment_id',
     ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'media',
+    ];
+
+    /**
+     * The attributes that should be appended.
+     *
+     * @var array<string, string>
+     */
+    protected $appends = [
+        'avatar',
+        'images',
+        'likes_counter',
+        'dislikes_counter',
+        'reaction_type',
+    ];
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('avatar')
+            ->width(400)
+            ->height(400)
+            ->nonOptimized()
+            ->performOnCollections('comment_images');
+    }
+
+    // get group avatar
+    public function getAvatarAttribute()
+    {
+        $conversionGenerated = $this->getFirstMedia('comment_images') ? $this->getFirstMedia('comment_images')->hasGeneratedConversion('avatar') : false; // returns true or false
+        if ($conversionGenerated) {
+            return $this->getFirstMediaUrl('comment_images', 'avatar');
+        } else {
+            return null;
+        }
+    }
+
+    // Get id and link of images
+    public function getImagesAttribute()
+    {
+        $images = [];
+        if ($this->getMedia('comment_images')) {
+            foreach ($this->getMedia('comment_images') as $key => $media) {
+                $images[$key] = ['id' => $media->id, 'url' => $media->getUrl(), 'order' => $media->order_column];
+            }
+        }
+        return $images;
+    }
     
     public function post()
     {
@@ -21,6 +78,11 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function commentLikes()
+    {
+        return $this->hasMany(CommentLike::class);
+    }
     
     public function parentComment()
     {
@@ -30,5 +92,37 @@ class Comment extends Model
     public function childrenComments()
     {
         return $this->hasMany(Comment::class, 'parent_comment_id');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->diffForHumans();
+    }
+
+    public function getLikesCounterAttribute()
+    {
+        $counter = CommentLike::where('comment_id', $this->id)->where('user_id', auth()->id())->where('is_liked', 1)->count();
+        return $counter;
+    }
+
+    public function getDislikesCounterAttribute()
+    {
+        $counter = CommentLike::where('comment_id', $this->id)->where('user_id', auth()->id())->where('is_liked', 0)->count();
+        return $counter;
+    }
+
+    public function getReactionTypeAttribute()
+    {
+        $reaction = CommentLike::where('comment_id', $this->id)->where('user_id', auth()->id())->select('is_liked')->first();
+        if($reaction != null){
+            if($reaction->is_liked){
+               return 'liked';
+            } else {
+               return 'disliked';
+            }
+       } else {
+           return null;
+       }
+       return null;
     }
 }

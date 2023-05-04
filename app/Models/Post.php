@@ -120,4 +120,9 @@ class Post extends Model implements HasMedia
         $counter = $this->comments()->count();
         return $counter;
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->diffForHumans();
+    }
 }

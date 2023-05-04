@@ -62,6 +62,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::prefix('comments')->group(function () {
                 Route::get('/', [CommentController::class, 'index']);
                 Route::post('create', [CommentController::class, 'store']);
+                Route::post('react', [CommentController::class, 'react']);
+                Route::post('report', [CommentController::class, 'report']);
             });
         });
 
@@ -84,6 +86,9 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         */
         Route::prefix('user')->group(function () {
             Route::get('/', [UserController::class, 'show']);
+            Route::post('block', [UserController::class, 'block']);
+            Route::post('unblock', [UserController::class, 'unblock']);
+            Route::post('blocked-list', [UserController::class, 'myBlockedList']);
         });
     });
 });

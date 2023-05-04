@@ -28,8 +28,11 @@ class PostController extends ApiController
 
         $limit = $request->limit ? $request->limit : 20;
 
+        // Get blocked users ids
+        $block_user_ids = $this->blockedUserIds();
+        
         // Get posts
-        $posts = Post::with('user')->latest()->paginate($limit);
+        $posts = Post::with('user')->whereNotIn('user_id', $block_user_ids)->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -108,8 +111,11 @@ class PostController extends ApiController
 
         $limit = $request->limit ? $request->limit : 20;
 
+        // Get blocked users ids
+        $block_user_ids = $this->blockedUserIds();
+
         // Get posts
-        $posts = $group->posts()->with('user')->paginate($limit);
+        $posts = $group->posts()->whereNotIn('user_id', $block_user_ids)->with('user')->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
