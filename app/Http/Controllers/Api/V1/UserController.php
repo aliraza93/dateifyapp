@@ -162,7 +162,7 @@ class UserController extends ApiController
             Otp::where('identifier', $user->phone)->delete();
             $user->tokens()->delete();
             Media::where('model_id', $user->id)->delete();
-            $user->notifications()->delete();
+            // $user->notifications()->delete();
 
             // DB::table('notifications')
             //     ->whereRaw("JSON_EXTRACT(`data`, '$.user_id') = ?", auth()->id())->delete();
