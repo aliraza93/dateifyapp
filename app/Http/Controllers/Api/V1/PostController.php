@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use App\Models\Group;
 use App\Models\GroupPosts;
 use App\Models\GroupUser;
@@ -123,4 +124,31 @@ class PostController extends ApiController
             'posts' => $posts
         ]);
     }
+
+    public function all_posts_list(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'limit' => 'nullable|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        $limit = $request->limit ? $request->limit : 20;
+
+        // Get blocked users ids
+        $block_user_ids = $this->blockedUserIds();
+        
+        // Get posts
+        $posts = Post::with(['user', 'comments'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
+
+        // $data = new Paginator($group, 20);
+        // $data = $data->setPath(url()->current());
+        return $this->SuccessResponse($this->dataRetrieved, [
+            'posts' => $posts
+        ]);
+    }
+
+    
 }

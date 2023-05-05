@@ -221,4 +221,29 @@ class CommentController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+
+    public function all_comments_list(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'limit' => 'nullable|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        $limit = $request->limit ? $request->limit : 20;
+
+        // Get blocked users ids
+        $block_user_ids = $this->blockedUserIds();
+        
+        // Get posts
+        $posts = Comment::with(['user', 'post'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
+
+        // $data = new Paginator($group, 20);
+        // $data = $data->setPath(url()->current());
+        return $this->SuccessResponse($this->dataRetrieved, [
+            'posts' => $posts
+        ]);
+    }
 }

@@ -46,6 +46,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
+       
 
         /*
         |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         */
         Route::prefix('posts')->group(function () {
             Route::get('/', [PostController::class, 'index']);
+            Route::get('/my', [PostController::class, 'all_posts_list']);
             Route::post('create', [PostController::class, 'store']);
             Route::get('list', [PostController::class, 'list']);
             Route::post('react', [PostLikesController::class, 'store']);
@@ -61,6 +63,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             // Comments
             Route::prefix('comments')->group(function () {
                 Route::get('/', [CommentController::class, 'index']);
+                Route::get('/all', [CommentController::class, 'all_comments_list']);
                 Route::post('create', [CommentController::class, 'store']);
                 Route::post('react', [CommentController::class, 'react']);
                 Route::post('report', [CommentController::class, 'report']);
@@ -89,6 +92,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('block', [UserController::class, 'block']);
             Route::post('unblock', [UserController::class, 'unblock']);
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);
+            Route::post('delete-account', [UserController::class, 'deleteAccount']);
         });
     });
 });
