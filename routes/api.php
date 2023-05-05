@@ -92,7 +92,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('block', [UserController::class, 'block']);
             Route::post('unblock', [UserController::class, 'unblock']);
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);
-            Route::post('delete-account', [UserController::class, 'deleteAccount']);
+            Route::delete('delete-account', [UserController::class, 'deleteAccount']);
         });
     });
 });
