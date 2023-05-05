@@ -59,6 +59,12 @@ class GroupController extends ApiController
 
         try {
 
+            $group_validate = Group::find($request->group_id);
+            
+            if(!$group_validate){
+                return $this->ErrorResponse('Group not found', null, null);
+            }
+
             $group = GroupUser::where('group_id', $request->group_id)->where('user_id', auth()->id())->first();
             if ($group) {
                 return $this->ErrorResponse('User is already added in this group!', null, null);
