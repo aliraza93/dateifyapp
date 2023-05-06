@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\CommentLike;
 use App\Models\Group;
 use App\Models\GroupPosts;
 use App\Models\GroupUser;
@@ -94,6 +95,61 @@ class PostController extends ApiController
         }
     }
 
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'is_flag'           => 'required|boolean',
+            'is_anonymous'      => 'required|boolean',
+            'flag_description'  => 'nullable',
+            'flag_count'        => 'nullable',
+            'description'       => 'nullable',
+            'group_id'          => 'required',
+            'post_id'          => 'required',
+
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+
+            $user = User::find(auth()->id());
+
+            if (!$user) {
+                return $this->ErrorResponse('No user record found in our database. Please try again', null, null);
+            }
+
+            $group = GroupUser::where('group_id', $request->group_id)->where('user_id', $user->id)->first();
+            if (!$group) {
+                return $this->ErrorResponse('No group record found in our database. Please try again', null, null);
+            }
+
+            $post =  Post::find($request->post_id);
+            if (!$post) {
+                return $this->ErrorResponse('No user record found in our database. Please try again', null, null);
+            }
+
+            $post->is_flag = $request->is_flag;
+            $post->is_anonymous = $request->is_anonymous;
+            $post->flag_description = $request->flag_description;
+            $post->flag_count = $request->flag_count;
+            $post->description = $request->description;
+            $post->save();
+
+            if ($images = $request->file('images')) {
+                foreach ($images as $image) {
+                    $post->addMedia($image)->toMediaCollection('post_images');
+                }
+            }
+            return $this->SuccessResponse('Added Succesfully.', [
+                'post' => $post
+            ]);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
     public function list(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -148,6 +204,31 @@ class PostController extends ApiController
         return $this->SuccessResponse($this->dataRetrieved, [
             'posts' => $posts
         ]);
+    }
+
+    public function destroy(Request $request)
+    {   
+        $validator = Validator::make($request->all(), [
+            'post_id' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $post = Post::where('id', $request->post_id)->first();
+            if($post){
+                Comment::where('post_id', $request->post_id)->delete();
+                $post->clearMediaCollection('post_images');
+                $post->delete();
+            } else {
+                return $this->ErrorResponse('No record found', null, null);
+            }
+            return $this->SuccessResponse($this->dataDeleted, null);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
     }
 
     
