@@ -65,7 +65,7 @@ class CommentController extends ApiController
             'parent_comment_id' => 'nullable|exists:comments,id',
             'post_id' => 'required|integer',
             'images' => 'nullable|array',
-            'is_anonymous' => 'nullable|boolean',
+            'is_anonymous' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {

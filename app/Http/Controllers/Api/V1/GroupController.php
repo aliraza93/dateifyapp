@@ -104,6 +104,33 @@ class GroupController extends ApiController
         }
     }
 
+    public function search_group(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'limit'         => 'nullable|numeric',
+            'is_global'     =>   'nullable|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $limit = $request->limit ? $request->limit : 20;
+            $user = User::find(auth()->id());
+            
+            if($request->filled('is_global')) {
+
+            }
+            $groups = $user->groups()->paginate($limit);
+            return $this->SuccessResponse($this->dataRetrieved, [
+                'groups' => $groups
+            ]);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
     public function leave(Request $request)
     {
         $validator = Validator::make($request->all(), [

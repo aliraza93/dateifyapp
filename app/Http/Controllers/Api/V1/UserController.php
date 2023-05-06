@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Seshac\Otp\Models\Otp;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class UserController extends ApiController
 {
@@ -34,6 +36,48 @@ class UserController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name'                      => 'nullable|string',
+            'username'                  => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $user = User::find(Auth::id());
+            // Check if request has name
+            
+            if ($request->name) {
+                $user->name = $request->name;
+            }
+
+            if ($request->username) {
+                $old_username = User::where('username', $request->username)->first();
+                if ($old_username) {
+                    $suggestions = $this->generateUsernameSuggestions($request->username); // Generate 3 different username suggestions
+                    return $this->ErrorResponse('Username already taken please choose a unique Username', $suggestions, null);
+                } else {
+                    $user->username = $request->username;
+                }
+                    
+            }
+            
+            $user->save();
+            
+            return $this->SuccessResponse($this->dataUpdated,[
+                    'user' => $user
+                ]
+            );
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
 
     // Block any user
     public function block(Request $request)

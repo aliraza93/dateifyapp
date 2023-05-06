@@ -59,6 +59,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('create', [PostController::class, 'store']);
             Route::get('list', [PostController::class, 'list']);
             Route::post('react', [PostLikesController::class, 'store']);
+            Route::delete('delete', [PostController::class, 'destroy']);
         
             // Comments
             Route::prefix('comments')->group(function () {
@@ -89,6 +90,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         */
         Route::prefix('user')->group(function () {
             Route::get('/', [UserController::class, 'show']);
+            Route::post('update', [UserController::class, 'update']);
             Route::post('block', [UserController::class, 'block']);
             Route::post('unblock', [UserController::class, 'unblock']);
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);
