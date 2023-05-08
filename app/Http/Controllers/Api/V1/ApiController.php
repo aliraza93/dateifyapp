@@ -117,7 +117,7 @@ class ApiController extends Controller
           $number, // to 
           array(
             "messagingServiceSid" => "MG872b64992f4a92c1c005dea521ecbee3",
-            "body" =>$otp . " is your verification code for SIDEPIECE."
+            "body" =>$otp . " is your verification code for Dateify."
           )
         );
     } catch (\Exception $e) {
