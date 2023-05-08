@@ -7,6 +7,7 @@ use App\Models\BlockUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Twilio\Rest\Client;
 
 class ApiController extends Controller
 {
@@ -102,4 +103,26 @@ class ApiController extends Controller
 
         return array_values($suggestions); // Re-index the array keys
     }
+
+    // Send OTP to phone number
+  public function sendOtp($number, $otp)
+  {
+    try {
+      $sid    = "AC10438f121da2234afb1f0303366e1917";
+      $token  = "bdfcc313c64029421ef65614b58bc6cf";
+      $twilio = new Client($sid, $token);
+
+      $twilio->messages
+        ->create(
+          $number, // to 
+          array(
+            "messagingServiceSid" => "MG872b64992f4a92c1c005dea521ecbee3",
+            "body" =>$otp . " is your verification code for SIDEPIECE."
+          )
+        );
+    } catch (\Exception $e) {
+      return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+    }
+
+  }
 }

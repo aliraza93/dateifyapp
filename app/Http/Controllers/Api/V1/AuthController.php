@@ -34,7 +34,7 @@ class AuthController extends ApiController
                 ->setUseSameToken(false) // if you re-generate OTP, you will get same token
                 ->generate($request->phone);
 
-            // $this->sendOtp($request->phone, $otp->token);
+            $this->sendOtp($request->phone, $otp->token);
             return $this->SuccessResponse($otp->message, [
                 'otp' => $otp->token,
             ]);
@@ -238,7 +238,7 @@ class AuthController extends ApiController
                     ->setOnlyDigits(true)  // generated otp contains mixed characters ex:ad2312
                     ->setUseSameToken(false) // if you re-generate OTP, you will get same token
                     ->generate($request->phone);
-                // $this->sendOtp($request->phone, $otp->token);
+                $this->sendOtp($request->phone, $otp->token);
                 return $this->SuccessResponse($otp->message, [
                     'otp' => $otp->token,
                 ]);
