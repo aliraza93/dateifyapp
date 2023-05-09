@@ -14,7 +14,7 @@ class ContactUsController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'email'             => 'required',
-            'sugesstions'       => 'nullable|string',
+            'message'       => 'nullable|string',
             
         ]);
 
@@ -29,7 +29,7 @@ class ContactUsController extends ApiController
             
               $support = new ContactUs();
               $support->email = $request->email;
-              $support->sugesstions = $request->sugesstions;
+              $support->message = $request->message;
                 if ($images = $request->file('images')) {
                 foreach ($images as $image) {
                     $user->addMedia($image)->toMediaCollection('support_image');
