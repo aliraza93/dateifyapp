@@ -103,16 +103,23 @@ class Post extends Model implements HasMedia
     public function getReactionTypeAttribute()
     {
         $reaction = PostLike::where('post_id', $this->id)->where('user_id', auth()->id())->select('is_liked')->first();
-        if($reaction != null){
-            if($reaction->is_liked){
-               return 'liked';
+        if ($reaction != null) {
+            // Check if liked
+            if ($reaction->is_liked) {
+                return 'like';
+            } else if (!$reaction->is_liked) {
+                if ($reaction->is_liked != 0 || $reaction->is_liked == '') {
+                    return NULL;
+                } else {
+                    return 'dislike';
+                }
             } else {
-               return 'disliked';
+                return NULL;
             }
-       } else {
-           return null;
-       }
-       return null;
+        } else {
+            return null;
+        }
+        return null;
     }
 
     public function getCommentsCountAttribute()

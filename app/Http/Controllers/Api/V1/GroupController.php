@@ -143,13 +143,18 @@ class GroupController extends ApiController
 
         try {
 
-            $group = GroupUser::where('group_id', $request->group_id)->where('user_id', auth()->id())->first();
+            $group = Group::where('id', $request->group_id)->first();
             if (!$group) {
+                return $this->ErrorResponse('Group not found!', null, null);
+            }
+
+            $groupUser = GroupUser::where('group_id', $request->group_id)->where('user_id', auth()->id())->first();
+            if (!$groupUser) {
                 return $this->ErrorResponse('User is not added in this group!', null, null);
             }
 
             $user = User::find(auth()->id());
-            $user->groups()->delete();
+            $user->groups()->detach($request->group_id);
             return $this->SuccessResponse($this->dataDeleted, null);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);

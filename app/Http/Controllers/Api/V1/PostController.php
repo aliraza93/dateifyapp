@@ -28,13 +28,15 @@ class PostController extends ApiController
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
 
+        $user = User::find(auth()->id());
         $limit = $request->limit ? $request->limit : 20;
 
         // Get blocked users ids
         $block_user_ids = $this->blockedUserIds();
+        $my_goup_ids = $user->groups()->pluck('groups.id')->toArray();
         
         // Get posts
-        $posts = Post::with('user')->whereNotIn('user_id', $block_user_ids)->latest()->paginate($limit);
+        $posts =  Post::where('group_id', $my_goup_ids)->whereNotIn('user_id', $block_user_ids)->with('user')->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -68,9 +70,14 @@ class PostController extends ApiController
                 return $this->ErrorResponse('No user record found in our database. Please try again', null, null);
             }
 
-            $group = GroupUser::where('group_id', $request->group_id)->where('user_id', $user->id)->first();
+            $group = Group::where('id', $request->group_id)->first();
             if (!$group) {
-                return $this->ErrorResponse('No group record found in our database. Please try again', null, null);
+                return $this->ErrorResponse('No group found. Please try again', null, null);
+            }
+
+            $groupUser = GroupUser::where('group_id', $request->group_id)->where('user_id', $user->id)->first();
+            if (!$groupUser) {
+                return $this->ErrorResponse('You are not a participant of this group. Please try again', null, null);
             }
 
             $newpost = new Post();
