@@ -92,7 +92,7 @@ class PostLikesController extends ApiController
                 $likeRecord = new PostLike();
                 $likeRecord->is_liked = $request->is_liked;
                 $likeRecord->post_id = $post_id;
-                $user->likes()->save($likeRecord);
+                $user->postLikes()->save($likeRecord);
                 
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,

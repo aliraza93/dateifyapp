@@ -165,7 +165,7 @@ class CommentController extends ApiController
                 $likeRecord = new CommentLike();
                 $likeRecord->is_liked = $request->is_liked;
                 $likeRecord->comment_id = $comment_id;
-                $user->likes()->save($likeRecord);
+                $user->commentLikes()->save($likeRecord);
 
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,
