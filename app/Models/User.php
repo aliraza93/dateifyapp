@@ -157,4 +157,12 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(CommentLike::class);
     }
+
+    /**
+     * Contact us form 
+     */
+    public function contactus()
+    {
+        return $this->hasMany(ContactUs::class);
+    }
 }
