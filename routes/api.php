@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\ContactUsController;
 use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostLikesController;
@@ -96,5 +97,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);
             Route::delete('delete-account', [UserController::class, 'deleteAccount']);
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Contact us Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('support')->group(function () {
+            Route::post('contact-us', [ContactUsController::class, 'contactus']);
+         });
     });
 });

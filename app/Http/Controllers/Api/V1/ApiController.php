@@ -107,6 +107,7 @@ class ApiController extends Controller
     // Send OTP to phone number
   public function sendOtp($number, $otp)
   {
+    
     try {
       $sid    = "AC10438f121da2234afb1f0303366e1917";
       $token  = "bdfcc313c64029421ef65614b58bc6cf";
