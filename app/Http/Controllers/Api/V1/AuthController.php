@@ -129,7 +129,6 @@ class AuthController extends ApiController
         }
 
         try {
-
             // Create new user
             $user = new User();
             $user->name = $request->name;

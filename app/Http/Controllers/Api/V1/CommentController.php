@@ -238,7 +238,7 @@ class CommentController extends ApiController
         $block_user_ids = $this->blockedUserIds();
         
         // Get posts
-        $posts = Comment::with(['user', 'post'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
+        $posts = Comment::with(['user', 'post.group'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());

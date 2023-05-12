@@ -40,8 +40,9 @@ class UserController extends ApiController
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'                      => 'nullable|string',
-            'username'                  => 'nullable|string'
+            'name'      => 'nullable|string',
+            'username'  => 'nullable|string',
+            'image'     => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         if ($validator->fails()) {
@@ -68,6 +69,13 @@ class UserController extends ApiController
             }
             
             $user->save();
+
+            $file = $request->file('image');
+
+            if ($file) {
+                $user->clearMediaCollection('profile_images');
+                $user->addMedia($file)->toMediaCollection('profile_images');
+            }
             
             return $this->SuccessResponse($this->dataUpdated,[
                     'user' => $user

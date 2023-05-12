@@ -68,12 +68,12 @@ class Comment extends Model implements HasMedia
         }
         return $images;
     }
-    
+
     public function post()
     {
         return $this->belongsTo(Post::class);
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -83,12 +83,12 @@ class Comment extends Model implements HasMedia
     {
         return $this->hasMany(CommentLike::class);
     }
-    
+
     public function parentComment()
     {
         return $this->belongsTo(Comment::class, 'parent_comment_id');
     }
-    
+
     public function childrenComments()
     {
         return $this->hasMany(Comment::class, 'parent_comment_id');
@@ -114,15 +114,22 @@ class Comment extends Model implements HasMedia
     public function getReactionTypeAttribute()
     {
         $reaction = CommentLike::where('comment_id', $this->id)->where('user_id', auth()->id())->select('is_liked')->first();
-        if($reaction != null){
-            if($reaction->is_liked){
-               return 'liked';
+        if ($reaction != null) {
+            // Check if liked
+            if ($reaction->is_liked) {
+                return 'like';
+            } else if (!$reaction->is_liked) {
+                if ($reaction->is_liked != 0 || $reaction->is_liked == '') {
+                    return NULL;
+                } else {
+                    return 'dislike';
+                }
             } else {
-               return 'disliked';
+                return NULL;
             }
-       } else {
-           return null;
-       }
-       return null;
+        } else {
+            return null;
+        }
+        return null;
     }
 }

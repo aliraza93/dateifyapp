@@ -204,7 +204,7 @@ class PostController extends ApiController
         $block_user_ids = $this->blockedUserIds();
         
         // Get posts
-        $posts = Post::with(['user', 'comments'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
+        $posts = Post::with(['user', 'group', 'comments'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
