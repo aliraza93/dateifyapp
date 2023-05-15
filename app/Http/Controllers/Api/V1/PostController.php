@@ -9,6 +9,7 @@ use App\Models\Group;
 use App\Models\GroupPosts;
 use App\Models\GroupUser;
 use App\Models\Post;
+use App\Models\ReportPost;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,11 +33,11 @@ class PostController extends ApiController
         $limit = $request->limit ? $request->limit : 20;
 
         // Get blocked users ids
-        $block_user_ids = $this->blockedUserIds();
+        $blocked_user_ids = $this->blockedUserIds();
         $my_goup_ids = $user->groups()->pluck('groups.id')->toArray();
-        
+
         // Get posts
-        $posts =  Post::where('group_id', $my_goup_ids)->whereNotIn('user_id', $block_user_ids)->with('user')->latest()->paginate($limit);
+        $posts =  Post::where('group_id', $my_goup_ids)->whereNotIn('user_id', $blocked_user_ids)->with('user')->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -176,10 +177,10 @@ class PostController extends ApiController
         $limit = $request->limit ? $request->limit : 20;
 
         // Get blocked users ids
-        $block_user_ids = $this->blockedUserIds();
+        $blocked_user_ids = $this->blockedUserIds();
 
         // Get posts
-        $posts = $group->posts()->whereNotIn('user_id', $block_user_ids)->with('user')->paginate($limit);
+        $posts = $group->posts()->whereNotIn('user_id', $blocked_user_ids)->with('user')->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -198,23 +199,77 @@ class PostController extends ApiController
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
 
+        $user = User::find(auth()->id());
         $limit = $request->limit ? $request->limit : 20;
 
         // Get blocked users ids
-        $block_user_ids = $this->blockedUserIds();
-        
-        // Get posts
-        $posts = Post::with(['user', 'group', 'comments'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
+        $blocked_user_ids = $this->blockedUserIds();
 
-        // $data = new Paginator($group, 20);
-        // $data = $data->setPath(url()->current());
+        $groups = $user->groups()
+            ->with([
+                'posts' => function ($query) use ($blocked_user_ids) {
+                    $query->whereNotIn('user_id', $blocked_user_ids)
+                        ->with([
+                            'comments' => function ($query) use ($blocked_user_ids) {
+                                $query->whereNotIn('user_id', $blocked_user_ids);
+                            }
+                        ]);
+                }
+            ])
+            ->latest()->paginate($limit);
         return $this->SuccessResponse($this->dataRetrieved, [
-            'posts' => $posts
+            'groups' => $groups
         ]);
     }
 
+    public function report(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'post_id'   => 'required|integer',
+            'reason'    => 'required|string',
+            'additional_note' => 'nullable|string'
+        ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+
+            $post = Post::find($request->post_id);
+            if (!$post) {
+                return $this->ErrorResponse('Invalid post id provided. Please enter valid post id.', null, null);
+            }
+
+            if ($post->user_id == Auth::id()) {
+                return $this->ErrorResponse('You can not report your post.', null, null);
+            }
+
+            $reportPost = ReportPost::where(['user_id' => Auth::id(), 'post_id' => $request->post_id])->first();
+            if ($reportPost) {
+                return $this->ErrorResponse('You have already reported this post.', null, [
+                    'record' => $reportPost
+                ]);
+            }
+
+            $report = new ReportPost();
+            $report->post_id = $request->post_id;
+            $report->reason = $request->reason;
+            $report->additional_note = $request->additional_note;
+            $report->user_id = Auth::id();
+            $report->save();
+
+            return $this->SuccessResponse('Post reported successfully.', [
+                'record' => $report
+            ]);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
     public function destroy(Request $request)
-    {   
+    {
         $validator = Validator::make($request->all(), [
             'post_id' => 'required|numeric'
         ]);
@@ -225,7 +280,7 @@ class PostController extends ApiController
 
         try {
             $post = Post::where('id', $request->post_id)->first();
-            if($post){
+            if ($post) {
                 Comment::where('post_id', $request->post_id)->delete();
                 $post->clearMediaCollection('post_images');
                 $post->delete();
@@ -237,6 +292,4 @@ class PostController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
-
-    
 }

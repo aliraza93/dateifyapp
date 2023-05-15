@@ -193,7 +193,7 @@ class CommentController extends ApiController
 
             $comment = Comment::find($request->comment_id);
             if (!$comment) {
-                return $this->ErrorResponse('Invalid comment id provided. Please enter valid user id.', null, null);
+                return $this->ErrorResponse('Invalid comment id provided. Please enter valid comment id.', null, null);
             }
 
             if ($comment->user_id == Auth::id()) {
@@ -232,18 +232,23 @@ class CommentController extends ApiController
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
 
+        $user = User::find(auth()->id());
         $limit = $request->limit ? $request->limit : 20;
 
         // Get blocked users ids
-        $block_user_ids = $this->blockedUserIds();
-        
-        // Get posts
-        $posts = Comment::with(['user', 'post.group'])->whereNotIn('user_id', $block_user_ids)->where('user_id', auth()->id())->latest()->paginate($limit);
+        $blocked_user_ids = $this->blockedUserIds();
 
-        // $data = new Paginator($group, 20);
-        // $data = $data->setPath(url()->current());
+        $groups = $user->groups()
+            ->with([
+                'comments' => function ($query) use ($blocked_user_ids) {
+                    $query->where('comments.user_id', auth()->id());
+                    $query->whereNotIn('comments.user_id', $blocked_user_ids);
+                }
+            ])
+            ->latest()->paginate($limit);
+
         return $this->SuccessResponse($this->dataRetrieved, [
-            'posts' => $posts
+            'groups' => $groups
         ]);
     }
 }

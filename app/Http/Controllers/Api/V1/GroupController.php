@@ -104,11 +104,12 @@ class GroupController extends ApiController
         }
     }
 
-    public function search_group(Request $request)
+    public function search(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'limit'         => 'nullable|numeric',
-            'is_global'     =>   'nullable|boolean',
+            'is_global'     => 'nullable|boolean',
+            'name'          => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -117,12 +118,25 @@ class GroupController extends ApiController
 
         try {
             $limit = $request->limit ? $request->limit : 20;
-            $user = User::find(auth()->id());
             
-            if($request->filled('is_global')) {
+            $isGlobal = $request->is_global;
+            $searchTerm = $request->name;
 
+            $groupsQuery = Group::query();
+
+            if ($isGlobal) {
+                // Search all groups by name
+                $groupsQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
+            } else {
+                // Search only joined groups by name
+                $groupsQuery->where('name', 'LIKE', '%' . $searchTerm . '%')
+                            ->whereHas('users', function ($query) {
+                                $query->where('user_id', auth()->id());
+                            });
             }
-            $groups = $user->groups()->paginate($limit);
+            
+            $groups = $groupsQuery->paginate($limit);
+
             return $this->SuccessResponse($this->dataRetrieved, [
                 'groups' => $groups
             ]);

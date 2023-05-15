@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\ReactPost;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostLike;
@@ -77,11 +78,20 @@ class PostLikesController extends ApiController
                     if ($request->is_liked) {
                         $likeOldRecord->update([
                             'is_liked' => 1
+                            
                         ]);
+                        // Get sender avatar
+                        $userPhoto = null;
+                        $userPhoto = $user->getFirstMediaUrl('profile_images', 'avatar');
+                        // broadcast(new ReactPost($likeOldRecord, $likesCounter, $userPhoto))->toOthers();
                     } else {
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
+                        // Get sender avatar
+                        $userPhoto = null;
+                        // $userPhoto = $user2->getFirstMediaUrl('profile_images', 'avatar');
+                        // broadcast(new ReactPost($request->user_id, $likesCounter, $userPhoto))->toOthers();
                     }
 
                     return $this->SuccessResponse($this->dataRetrieved, [

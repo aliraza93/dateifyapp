@@ -43,6 +43,11 @@ class Group extends Model implements HasMedia
         return $this->hasMany(Post::class);
     }
 
+    public function comments()
+    {
+        return $this->hasManyThrough(Comment::class, Post::class);
+    }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('avatar')

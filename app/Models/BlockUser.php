@@ -19,6 +19,6 @@ class BlockUser extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->diffForHumans();
+        return \Carbon\Carbon::parse($value)->toFormattedDateString();
     }
 }
