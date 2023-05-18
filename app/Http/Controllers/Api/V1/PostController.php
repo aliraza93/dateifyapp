@@ -210,7 +210,7 @@ class PostController extends ApiController
                 'posts' => function ($query) use ($blocked_user_ids) {
                     $query->whereNotIn('user_id', $blocked_user_ids)
                         ->with([
-                            'comments' => function ($query) use ($blocked_user_ids) {
+                            'comments.childrenComments' => function ($query) use ($blocked_user_ids) {
                                 $query->whereNotIn('user_id', $blocked_user_ids);
                             }
                         ]);
@@ -288,6 +288,32 @@ class PostController extends ApiController
                 return $this->ErrorResponse('No record found', null, null);
             }
             return $this->SuccessResponse($this->dataDeleted, null);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
+    public function show(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'post_id' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $post = Post::where('id', $request->post_id)->first();
+            if (!$post) {
+                return $this->ErrorResponse('Invalid post id provided. Please enter valid post id.', null, null);
+            }
+
+            $post = Post::where('id', $request->post_id)->with('comments.childrenComments')->first();
+            
+            return $this->SuccessResponse($this->dataRetrieved, [
+                'post' => $post
+            ]);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }

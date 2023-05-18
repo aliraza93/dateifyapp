@@ -35,6 +35,7 @@ class Comment extends Model implements HasMedia
         'likes_counter',
         'dislikes_counter',
         'reaction_type',
+        'replies_counter',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -131,5 +132,16 @@ class Comment extends Model implements HasMedia
             return null;
         }
         return null;
+    }
+
+    public function getRepliesCounterAttribute()
+    {
+        // Check if the comment has replies or not
+        $isReply = $this->parent_comment_id;
+        if (!$isReply) {
+            return $this->childrenComments()->count();
+        } else {
+            return 0;
+        }
     }
 }

@@ -62,6 +62,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('react', [PostLikesController::class, 'store']);
             Route::delete('delete', [PostController::class, 'destroy']);
             Route::post('report', [PostController::class, 'report']);
+            Route::get('/post', [PostController::class, 'show']);
         
             // Comments
             Route::prefix('comments')->group(function () {
@@ -70,6 +71,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
                 Route::post('create', [CommentController::class, 'store']);
                 Route::post('react', [CommentController::class, 'react']);
                 Route::post('report', [CommentController::class, 'report']);
+                Route::get('/comment', [CommentController::class, 'show']);
             });
         });
 

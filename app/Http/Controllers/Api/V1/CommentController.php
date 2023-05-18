@@ -251,4 +251,30 @@ class CommentController extends ApiController
             'groups' => $groups
         ]);
     }
+
+    public function show(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment_id' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $comment = Comment::where('id', $request->comment_id)->first();
+            if (!$comment) {
+                return $this->ErrorResponse('Invalid comment id provided. Please enter valid comment id.', null, null);
+            }
+
+            $comment = Comment::where('id', $request->comment_id)->with('childrenComments')->first();
+            
+            return $this->SuccessResponse($this->dataRetrieved, [
+                'comment' => $comment
+            ]);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
 }
