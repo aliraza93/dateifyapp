@@ -12,6 +12,7 @@ use App\Models\ReportComment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Seshac\Otp\Models\Otp;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -28,7 +29,7 @@ class UserController extends ApiController
                 return $this->ErrorResponse('No user found in our database. Please try again', null, null);
             }
             $user = User::where('id', auth()->id())->first()->append('images');
-            
+
             return $this->SuccessResponse($this->dataRetrieved, [
                 'user' => $user,
             ]);
@@ -52,7 +53,7 @@ class UserController extends ApiController
         try {
             $user = User::find(Auth::id());
             // Check if request has name
-            
+
             if ($request->name) {
                 $user->name = $request->name;
             }
@@ -65,9 +66,8 @@ class UserController extends ApiController
                 } else {
                     $user->username = $request->username;
                 }
-                    
             }
-            
+
             $user->save();
 
             $file = $request->file('image');
@@ -76,8 +76,10 @@ class UserController extends ApiController
                 $user->clearMediaCollection('profile_images');
                 $user->addMedia($file)->toMediaCollection('profile_images');
             }
-            
-            return $this->SuccessResponse($this->dataUpdated,[
+
+            return $this->SuccessResponse(
+                $this->dataUpdated,
+                [
                     'user' => $user
                 ]
             );
@@ -109,7 +111,7 @@ class UserController extends ApiController
             if ($user->id == Auth::id()) {
                 return $this->ErrorResponse('You can not block yourself.', null, null);
             }
-            
+
             // Check if already blocked
             $blockRecord = BlockUser::where('user_id', Auth::id())->where('blocked_user_id', $request->user_id)->first();
             if ($blockRecord) {
@@ -204,21 +206,26 @@ class UserController extends ApiController
     {
         try {
             $user = User::find(Auth::id());
-            BlockUser::where('blocked_user_id', $user->id)->delete();
-            BlockUser::where('user_id', $user->id)->delete();
-            Comment::where('user_id', $user->id)->forceDelete();
-            CommentLike::where('user_id', $user->id)->delete();
-            GroupUser::where('user_id', $user->id)->delete();
-            Post::where('user_id', $user->id)->delete();
-            ReportComment::where('receiver_id', $user->id)->delete();
-            Otp::where('identifier', $user->phone)->delete();
+
+            DB::table('otps')->where('identifier', $user->phone)->delete();
+            DB::table('media')->where('model_id', $user->id)->delete();
+            DB::table('group_users')->where('user_id', $user->id)->delete();
+            DB::table('posts')->where('user_id', $user->id)->delete();
+            DB::table('post_likes')->where('user_id', $user->id)->delete();
+            DB::table('report_posts')->where('user_id', $user->id)->delete();
+            DB::table('comments')->where('user_id', $user->id)->delete();
+            DB::table('comment_likes')->where('user_id', $user->id)->delete();
+            DB::table('report_comments')->where('user_id', $user->id)->delete();
+            DB::table('block_users')->where('blocked_user_id', $user->id)->delete();
+            DB::table('block_users')->where('user_id', $user->id)->delete();
+            DB::table('contact_us')->where('user_id', $user->id)->delete();
             $user->tokens()->delete();
-            Media::where('model_id', $user->id)->delete();
             // $user->notifications()->delete();
 
             // DB::table('notifications')
-            //     ->whereRaw("JSON_EXTRACT(`data`, '$.user_id') = ?", auth()->id())->delete();
-            // $user->delete();
+            //     ->whereRaw("JSON_EXTRACT(`data`, '$.user_id') = ?", $user_id)->delete();
+            // $user->clearMediaCollection('profile_images');
+            $user->delete();
             return $this->SuccessResponse($this->dataDeleted, null);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);

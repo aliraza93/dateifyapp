@@ -88,7 +88,8 @@ class AuthController extends ApiController
         }
 
         try {
-            $username = Str::slug($request->name, '-'); // Convert name to slug format
+            $name = $request->name;
+            $username = Str::slug($name, '-'); // Convert name to slug format
             $usernameExists = false;
             // Check if username already exists in the database
             $user = User::where('username', $username)->first();
@@ -118,7 +119,7 @@ class AuthController extends ApiController
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'phone' => 'required|unique:users',
-            'username' => 'required|string|unique:users',
+            'username' => 'required|string',
             'dob' => 'required|date',
             'gender' => 'required|string',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif',
@@ -129,31 +130,50 @@ class AuthController extends ApiController
         }
 
         try {
-            // Create new user
-            $user = new User();
-            $user->name = $request->name;
-            $user->username = $request->username;
-            $user->gender = $request->gender;
-            $user->phone = $request->phone;
-            $user->dob = Carbon::parse($request->dob);
-            $user->save();
 
-            $file = $request->file('photo');
+            $username = $request->username;
+            $username = Str::slug($username, '-'); // Convert name to slug format
+            $usernameExists = false;
+            // Check if username already exists in the database
+            $user = User::where('username', $username)->exists();
+            if ($user) {
+                $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
+                $usernameExists = true;
+                return $this->SuccessResponse(
+                    $this->dataRetrieved,
+                    [
+                        'username' => $username,
+                        'usernameExists' => $usernameExists,
+                        'suggestions' => $suggestions
+                    ]
+                );
+            } else {
+                // Create new user
+                $user = new User();
+                $user->name = $request->name;
+                $user->username = $request->username;
+                $user->gender = $request->gender;
+                $user->phone = $request->phone;
+                $user->dob = Carbon::parse($request->dob);
+                $user->save();
 
-            if ($file) {
-                $mediaItems = $user->addMedia($file)->toMediaCollection('profile_images');
+                $file = $request->file('photo');
+
+                if ($file) {
+                    $mediaItems = $user->addMedia($file)->toMediaCollection('profile_images');
+                }
+
+                $jwt_token = $user->createToken('access-token')->plainTextToken;
+
+                return $this->SuccessResponse(
+                    'User registered & logged in successfully.',
+                    [
+                        'user' => $user,
+                        'image_url' => $mediaItems->getFullUrl(),
+                        'token' => $jwt_token,
+                    ]
+                );
             }
-
-            $jwt_token = $user->createToken('access-token')->plainTextToken;
-
-            return $this->SuccessResponse(
-                'User registered & logged in successfully.',
-                [
-                    'user' => $user,
-                    'image_url' => $mediaItems->getFullUrl(),
-                    'token' => $jwt_token,
-                ]
-            );
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
