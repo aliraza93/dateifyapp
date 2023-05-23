@@ -208,7 +208,7 @@ class PostController extends ApiController
         $groups = $user->groups()
             ->with([
                 'posts' => function ($query) use ($blocked_user_ids) {
-                    $query->whereNotIn('user_id', $blocked_user_ids)
+                    $query->whereNotIn('user_id', $blocked_user_ids)->where('user_id', auth()->id())
                         ->with([
                             'comments.childrenComments' => function ($query) use ($blocked_user_ids) {
                                 $query->whereNotIn('user_id', $blocked_user_ids);
