@@ -109,15 +109,15 @@ class ApiController extends Controller
   {
     
     try {
-      $sid    = "AC10438f121da2234afb1f0303366e1917";
-      $token  = "bdfcc313c64029421ef65614b58bc6cf";
+      $sid    = "AC59b6155fa6212afbb8130715e0b57f11";
+      $token  = "16d5f42d269c620c7a15e88dcea8c160";
       $twilio = new Client($sid, $token);
 
       $twilio->messages
         ->create(
           $number, // to 
           array(
-            "messagingServiceSid" => "MG872b64992f4a92c1c005dea521ecbee3",
+            "messagingServiceSid" => "MG2564fe869ffd8c9f74c185a8e5983722",
             "body" =>$otp . " is your verification code for Dateify."
           )
         );
