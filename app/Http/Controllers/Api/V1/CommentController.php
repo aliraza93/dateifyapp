@@ -277,4 +277,28 @@ class CommentController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+
+    public function destroy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment_id' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $comment = Comment::where('id', $request->comment_id)->first();
+            if ($comment) {
+                $comment->clearMediaCollection('comment_images');
+                $comment->delete();
+            } else {
+                return $this->ErrorResponse('No record found', null, null);
+            }
+            return $this->SuccessResponse($this->dataDeleted, null);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
 }

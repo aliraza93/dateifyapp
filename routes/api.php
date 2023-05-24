@@ -72,6 +72,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
                 Route::post('react', [CommentController::class, 'react']);
                 Route::post('report', [CommentController::class, 'report']);
                 Route::get('/comment', [CommentController::class, 'show']);
+                Route::delete('delete', [CommentController::class, 'destroy']);
             });
         });
 
