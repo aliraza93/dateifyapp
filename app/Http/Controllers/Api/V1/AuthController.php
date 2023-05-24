@@ -92,13 +92,13 @@ class AuthController extends ApiController
             $username = Str::slug($name, '-'); // Convert name to slug format
             $usernameExists = false;
             // Check if username already exists in the database
-            $user = User::where('username', $username)->first();
-            if (!$user) {
+            $user = User::where('username', $name)->first();
+            if ($user) {
                 $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
-                $usernameExists = false;
+                $usernameExists = true;
             } else {
                 $suggestions = [];
-                $usernameExists = true;
+                $usernameExists = false;
             }
             return $this->SuccessResponse(
                 $this->dataRetrieved,
@@ -135,7 +135,7 @@ class AuthController extends ApiController
             $username = Str::slug($username, '-'); // Convert name to slug format
             $usernameExists = false;
             // Check if username already exists in the database
-            $user = User::where('username', $username)->exists();
+            $user = User::where('username', $request->username)->exists();
             if ($user) {
                 $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
                 $usernameExists = true;
