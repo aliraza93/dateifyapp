@@ -73,7 +73,7 @@ class ApiController extends Controller
     // Get deactivated users ids
     public function deactivatedUserIds()
     {
-        return User::where('is_deactivated', 1)->pluck('user_id');
+        return User::where('is_deactivated', 1)->pluck('id');
     }
 
     public function generateUsernameSuggestions($baseUsername)
