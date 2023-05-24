@@ -231,4 +231,24 @@ class UserController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+
+    public function deactivateAccount(Request $request)
+    {
+        try {
+
+            $user = User::find(auth()->id());
+            if (!$user) {
+                return $this->ErrorResponse('Invalid user id provided. Please enter valid user id.', null, null);
+            }
+
+            $user->is_deactivated = true;
+            $user->save();
+            
+            return $this->SuccessResponse('User deactivated successfully.', [
+                'record' => $user
+            ]);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
 }

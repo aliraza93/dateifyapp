@@ -15,29 +15,28 @@ class ContactUsController extends ApiController
         $validator = Validator::make($request->all(), [
             'email'             => 'required',
             'message'       => 'nullable|string',
-            
+
         ]);
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
-        
+
         try {
-            
+
             $user = User::find(auth()->id());
-            
-              $support = new ContactUs();
-              $support->email = $request->email;
-              $support->message = $request->message;
-                if ($images = $request->file('images')) {
+
+            $support = new ContactUs();
+            $support->email = $request->email;
+            $support->message = $request->message;
+            if ($images = $request->file('images')) {
                 foreach ($images as $image) {
                     $user->addMedia($image)->toMediaCollection('support_image');
                 }
-                 }
-              $user->contactus()->save($support);
-              return $this->SuccessResponse('Added Succesfully.', null);
-            
+            }
+            $user->contactus()->save($support);
+            return $this->SuccessResponse('Added Succesfully.', null);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }

@@ -34,10 +34,11 @@ class PostController extends ApiController
 
         // Get blocked users ids
         $blocked_user_ids = $this->blockedUserIds();
+        $deactivatedUsersIds = $this->deactivatedUserIds();
         $my_goup_ids = $user->groups()->pluck('groups.id')->toArray();
 
         // Get posts
-        $posts =  Post::where('group_id', $my_goup_ids)->whereNotIn('user_id', $blocked_user_ids)->with('user')->latest()->paginate($limit);
+        $posts =  Post::where('group_id', $my_goup_ids)->whereNotIn('user_id', $blocked_user_ids)->whereNotIn('user_id', $deactivatedUsersIds)->with('user')->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -179,8 +180,10 @@ class PostController extends ApiController
         // Get blocked users ids
         $blocked_user_ids = $this->blockedUserIds();
 
+        $deactivatedUsersIds = $this->deactivatedUserIds();
+
         // Get posts
-        $posts = $group->posts()->whereNotIn('user_id', $blocked_user_ids)->with('user')->paginate($limit);
+        $posts = $group->posts()->whereNotIn('user_id', $blocked_user_ids)->whereNotIn('user_id', $deactivatedUsersIds)->with('user')->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());
@@ -205,13 +208,16 @@ class PostController extends ApiController
         // Get blocked users ids
         $blocked_user_ids = $this->blockedUserIds();
 
+        $deactivatedUsersIds = $this->deactivatedUserIds();
+
         $groups = $user->groups()
             ->with([
-                'posts' => function ($query) use ($blocked_user_ids) {
-                    $query->whereNotIn('user_id', $blocked_user_ids)->where('user_id', auth()->id())
+                'posts' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
+                    $query->whereNotIn('user_id', $blocked_user_ids)->where('user_id', auth()->id())->whereNotIn('user_id', $deactivatedUsersIds)
                         ->with([
-                            'comments.childrenComments' => function ($query) use ($blocked_user_ids) {
+                            'comments.childrenComments' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
                                 $query->whereNotIn('user_id', $blocked_user_ids);
+                                $query->whereNotIn('user_id', $deactivatedUsersIds);
                             }
                         ]);
                 }
@@ -237,7 +243,8 @@ class PostController extends ApiController
 
         try {
 
-            $post = Post::find($request->post_id);
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+            $post = Post::find($request->post_id)->whereNotIn('user_id', $deactivatedUsersIds);
             if (!$post) {
                 return $this->ErrorResponse('Invalid post id provided. Please enter valid post id.', null, null);
             }
@@ -304,13 +311,23 @@ class PostController extends ApiController
         }
 
         try {
-            $post = Post::where('id', $request->post_id)->first();
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+            $blocked_user_ids = $this->blockedUserIds();
+            $post = Post::where('id', $request->post_id)->whereNotIn('user_id', $deactivatedUsersIds)->first();
             if (!$post) {
                 return $this->ErrorResponse('Invalid post id provided. Please enter valid post id.', null, null);
             }
 
-            $post = Post::where('id', $request->post_id)->with('comments.childrenComments')->first();
-            
+            $post = Post::where('id', $request->post_id)->whereNotIn('user_id', $deactivatedUsersIds)->with('comments.childrenComments')
+                ->with([
+                    'comments.childrenComments' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
+                        $query->whereNotIn('comments.user_id', $deactivatedUsersIds);
+                        $query->whereNotIn('comments.user_id', $blocked_user_ids);
+                        $query->whereNotIn('childrenComments.user_id', $deactivatedUsersIds);
+                        $query->whereNotIn('childrenComments.user_id', $blocked_user_ids);
+                    }
+                ])->first();
+
             return $this->SuccessResponse($this->dataRetrieved, [
                 'post' => $post
             ]);

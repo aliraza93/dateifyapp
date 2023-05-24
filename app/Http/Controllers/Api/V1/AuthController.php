@@ -214,6 +214,10 @@ class AuthController extends ApiController
                 $user = $this->loginDetails($user->id);
             }
 
+            // Activate user's account
+            $user->is_deactivated = false;
+            $user->save();
+
             $jwt_token = $user->createToken('access-token')->plainTextToken;
 
             return $this->SuccessResponse(

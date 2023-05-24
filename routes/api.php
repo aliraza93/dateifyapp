@@ -101,6 +101,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('unblock', [UserController::class, 'unblock']);
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);
             Route::delete('delete-account', [UserController::class, 'deleteAccount']);
+            Route::post('deactivate-account', [UserController::class, 'deactivateAccount']);
         });
 
         /*

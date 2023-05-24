@@ -29,13 +29,23 @@ class CommentController extends ApiController
 
         try {
 
-            $post = Post::where('id', $request->post_id)->first();
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+
+            $blocked_user_ids = $this->blockedUserIds();
+
+            $post = Post::where('id', $request->post_id)->whereNotIn('user_id', $deactivatedUsersIds)->first();
             if (!$post) {
                 return $this->ErrorResponse('No post record found in our database. Please try again', null, null);
             }
 
-            $comments = Comment::where('post_id', $request->post_id)
-                ->with(['user', 'childrenComments.user'])
+            $comments = Comment::whereNotIn('user_id', $deactivatedUsersIds)
+                ->where('post_id', $request->post_id)
+                ->with([
+                    'user', 'childrenComments.user' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
+                        $query->whereNotIn('childrenComments.user_id', $deactivatedUsersIds);
+                        $query->whereNotIn('childrenComments.user_id', $blocked_user_ids);
+                    }
+                ])
                 ->whereNull('parent_comment_id')
                 ->get();
 
@@ -116,9 +126,12 @@ class CommentController extends ApiController
         }
 
         try {
+
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+
             // Autheticate user
             $comment_id    = $request->comment_id;
-            $comment       = Comment::where('id', $comment_id)->first();
+            $comment       = Comment::where('id', $comment_id)->whereNotIn('user_id', $deactivatedUsersIds)->first();
             if (!$comment) {
                 return $this->ErrorResponse('No record found in our database. Please try again', null, null);
             }
@@ -130,7 +143,7 @@ class CommentController extends ApiController
             $user = User::where('id', auth()->id())->first();
 
             // Check if record existis already
-            $likeOldRecord = CommentLike::where(['user_id' => Auth::id(), 'comment_id' => $comment_id])->first();
+            $likeOldRecord = CommentLike::whereNotIn('user_id', $deactivatedUsersIds)->where(['user_id' => Auth::id(), 'comment_id' => $comment_id])->first();
 
             if ($likeOldRecord) {
                 if ($likeOldRecord->is_liked == $request->is_liked) {
@@ -190,8 +203,8 @@ class CommentController extends ApiController
         }
 
         try {
-
-            $comment = Comment::find($request->comment_id);
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+            $comment = Comment::find($request->comment_id)->whereNotIn('user_id', $deactivatedUsersIds);
             if (!$comment) {
                 return $this->ErrorResponse('Invalid comment id provided. Please enter valid comment id.', null, null);
             }
@@ -200,7 +213,7 @@ class CommentController extends ApiController
                 return $this->ErrorResponse('You can not report your comment.', null, null);
             }
 
-            $reportComment = ReportComment::where(['user_id' => Auth::id(), 'comment_id' => $request->comment_id])->first();
+            $reportComment = ReportComment::whereNotIn('user_id', $deactivatedUsersIds)->where(['user_id' => Auth::id(), 'comment_id' => $request->comment_id])->first();
             if ($reportComment) {
                 return $this->ErrorResponse('You have already reported this comment.', null, [
                     'record' => $reportComment
@@ -232,15 +245,18 @@ class CommentController extends ApiController
             return $this->ErrorResponse($this->validationError, $validator->errors(), null);
         }
 
+        $deactivatedUsersIds = $this->deactivatedUserIds();
+
         $user = User::find(auth()->id());
         $limit = $request->limit ? $request->limit : 20;
 
         // Get blocked users ids
         $blocked_user_ids = $this->blockedUserIds();
 
-        $groups = $user->groups()
+        $groups = $user->groups()->whereNotIn('user_id', $deactivatedUsersIds)
             ->with([
-                'comments' => function ($query) use ($blocked_user_ids) {
+                'comments' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
+                    $query->whereNotIn('comments.user_id', $deactivatedUsersIds);
                     $query->where('comments.user_id', auth()->id());
                     $query->whereNotIn('comments.user_id', $blocked_user_ids);
                 }
@@ -263,13 +279,22 @@ class CommentController extends ApiController
         }
 
         try {
-            $comment = Comment::where('id', $request->comment_id)->first();
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+            $blocked_user_ids = $this->blockedUserIds();
+
+            $comment = Comment::where('id', $request->comment_id)->whereNotIn('user_id', $deactivatedUsersIds)->first();
             if (!$comment) {
                 return $this->ErrorResponse('Invalid comment id provided. Please enter valid comment id.', null, null);
             }
 
-            $comment = Comment::where('id', $request->comment_id)->with('childrenComments')->first();
-            
+            $comment = Comment::where('id', $request->comment_id)->whereNotIn('user_id', $deactivatedUsersIds)->with('childrenComments')
+                ->with([
+                    'childrenComments.user' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
+                        $query->whereNotIn('childrenComments.user_id', $deactivatedUsersIds);
+                        $query->whereNotIn('childrenComments.user_id', $blocked_user_ids);
+                    }
+                ])->first();
+
             return $this->SuccessResponse($this->dataRetrieved, [
                 'comment' => $comment
             ]);
@@ -289,7 +314,8 @@ class CommentController extends ApiController
         }
 
         try {
-            $comment = Comment::where('id', $request->comment_id)->first();
+            $deactivatedUsersIds = $this->deactivatedUserIds();
+            $comment = Comment::where('id', $request->comment_id)->whereNotIn('user_id', $deactivatedUsersIds)->first();
             if ($comment) {
                 $comment->clearMediaCollection('comment_images');
                 $comment->delete();

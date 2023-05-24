@@ -117,6 +117,7 @@ class GroupController extends ApiController
         }
 
         try {
+            $deactivatedUsersIds = $this->deactivatedUserIds();
             $limit = $request->limit ? $request->limit : 20;
             
             $isGlobal = $request->is_global;
@@ -130,8 +131,9 @@ class GroupController extends ApiController
             } else {
                 // Search only joined groups by name
                 $groupsQuery->where('name', 'LIKE', '%' . $searchTerm . '%')
-                            ->whereHas('users', function ($query) {
+                            ->whereHas('users', function ($query) use ($deactivatedUsersIds) {
                                 $query->where('user_id', auth()->id());
+                                $query->whereNotIn('user_id', $deactivatedUsersIds);
                             });
             }
             
