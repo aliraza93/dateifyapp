@@ -96,18 +96,20 @@ class AuthController extends ApiController
             if ($user) {
                 $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
                 $usernameExists = true;
+                return $this->ErrorResponse(
+                    $this->dataRetrieved,
+                    null,
+                    [
+                        'username' => $username,
+                        'usernameExists' => $usernameExists,
+                        'suggestions' => $suggestions
+                    ]
+                );
             } else {
                 $suggestions = [];
                 $usernameExists = false;
+                return $this->SuccessResponse("Username validated successfully", null);
             }
-            return $this->SuccessResponse(
-                $this->dataRetrieved,
-                [
-                    'username' => $username,
-                    'usernameExists' => $usernameExists,
-                    'suggestions' => $suggestions
-                ]
-            );
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
@@ -139,8 +141,9 @@ class AuthController extends ApiController
             if ($user) {
                 $suggestions = $this->generateUsernameSuggestions($username); // Generate 3 different username suggestions
                 $usernameExists = true;
-                return $this->SuccessResponse(
+                return $this->ErrorResponse(
                     $this->dataRetrieved,
+                    null,
                     [
                         'username' => $username,
                         'usernameExists' => $usernameExists,
