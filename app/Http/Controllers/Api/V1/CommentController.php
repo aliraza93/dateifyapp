@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\Comment as EventsComment;
+use App\Events\ReactComment;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\CommentLike;
 use App\Models\Post;
 use App\Models\ReportComment;
 use App\Models\User;
+use App\Notifications\UserNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -85,6 +88,9 @@ class CommentController extends ApiController
         try {
 
             $post = Post::where('id', $request->post_id)->first();
+            $post_owner = User::find($post->user_id);
+            $user = User::find(auth()->id());
+
             if (!$post) {
                 return $this->ErrorResponse('No post record found in our database. Please try again', null, null);
             }
@@ -101,6 +107,12 @@ class CommentController extends ApiController
                 foreach ($images as $image) {
                     $comment->addMedia($image)->toMediaCollection('comment_images');
                 }
+            }
+            $newcomment = Comment::where('id', $comment->id)->first();
+            
+            broadcast(new EventsComment($post, $newcomment, $request->parent_comment_id, $user))->toOthers();
+            if($post_owner->id != $post->user_id){
+                $post_owner->notify(new UserNotify($user, 'Comment on your post', 'post_comment' ));
             }
 
             return $this->SuccessResponse($this->dataCreated, [
@@ -148,14 +160,15 @@ class CommentController extends ApiController
             if ($likeOldRecord) {
                 if ($likeOldRecord->is_liked == $request->is_liked) {
                     if ($likeOldRecord->is_liked == '' && $request->is_liked == 0) {
+                        broadcast(new ReactComment($comment, $user, $request->is_liked))->toOthers();
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
                     } else {
-                        CommentLike::where(['user_id' => auth()->id(), 'comment_id' => $comment_id])
-                            ->update([
-                                'is_liked' => NULL
-                            ]);
+                        CommentLike::where(['user_id' => auth()->id(), 'comment_id' => $comment_id])->update([
+                            'is_liked' => NULL
+                        ]);
+                        broadcast(new ReactComment($likeOldRecord, $user, $request->is_liked))->toOthers();
 
                         return $this->SuccessResponse($this->dataDeleted, null);
                     }
@@ -164,7 +177,9 @@ class CommentController extends ApiController
                         $likeOldRecord->update([
                             'is_liked' => 1
                         ]);
+                        broadcast(new ReactComment($comment, $user, $request->is_liked))->toOthers();
                     } else {
+                        broadcast(new ReactComment($comment, $user, $request->is_liked))->toOthers();
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
@@ -179,7 +194,12 @@ class CommentController extends ApiController
                 $likeRecord->is_liked = $request->is_liked;
                 $likeRecord->comment_id = $comment_id;
                 $user->commentLikes()->save($likeRecord);
-
+                $comment_owner = User::find($comment->user_id);
+                $post = Post::find($comment->post_id);
+                $post_owner = User::find($post->user_id);
+                broadcast(new ReactComment($comment, $user, $request->is_liked))->toOthers();
+                $comment_owner->notify(new UserNotify($user, 'React on your comment', 'comment_reaction' ));
+                $post_owner->notify(new UserNotify($user, 'React on your post comment', 'comment_reaction' ));
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,
                 ]);

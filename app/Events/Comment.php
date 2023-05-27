@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Comment as ModelsComment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -12,20 +13,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReactPost implements ShouldBroadcast
+class Comment implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $post;
-    public $action;
-    public $user;
     /**
      * Create a new event instance.
      */
-    public function __construct(Post $post, User $user, string $action)
+    public $post;
+    public $comment;
+    public $parent_comment_id;
+    public $user;
+    public function __construct(Post $post, ModelsComment $comment, $parent_comment_id, User $user)
     {
         $this->post = $post;
-        $this->action = $action;
+        $this->comment = $comment;
+        $this->parent_comment_id = $parent_comment_id;
         $this->user = $user;
     }
 
