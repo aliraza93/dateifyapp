@@ -112,7 +112,10 @@ class CommentController extends ApiController
             
             broadcast(new EventsComment($post, $newcomment, $request->parent_comment_id, $user))->toOthers();
             if($post_owner->id != $post->user_id){
-                $post_owner->notify(new UserNotify($user, 'Comment on your post', 'post_comment' ));
+                if($post_owner->is_notification_on){
+
+                    $post_owner->notify(new UserNotify($user, 'Comment on your post', 'post_comment' ));
+                }
             }
 
             return $this->SuccessResponse($this->dataCreated, [
@@ -198,8 +201,15 @@ class CommentController extends ApiController
                 $post = Post::find($comment->post_id);
                 $post_owner = User::find($post->user_id);
                 broadcast(new ReactComment($comment, $user, $request->is_liked))->toOthers();
-                $comment_owner->notify(new UserNotify($user, 'React on your comment', 'comment_reaction' ));
-                $post_owner->notify(new UserNotify($user, 'React on your post comment', 'comment_reaction' ));
+              
+                if($comment_owner->is_notification_on){
+                    
+                    $comment_owner->notify(new UserNotify($user, 'React on your comment', 'comment_reaction' ));
+                }
+                if($post_owner->is_notification_on){
+                    
+                    $post_owner->notify(new UserNotify($user, 'React on your post comment', 'comment_reaction' ));
+                }
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,
                 ]);
