@@ -106,7 +106,7 @@ class NotificationController extends ApiController
                 ->first()
                 ->delete();
 
-            return $this->SuccessResponse('Read Succesfully.', null);
+            return $this->SuccessResponse($this->dataDeleted, null);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
