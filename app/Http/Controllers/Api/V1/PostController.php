@@ -38,7 +38,7 @@ class PostController extends ApiController
         $my_goup_ids = $user->groups()->pluck('groups.id')->toArray();
 
         // Get posts
-        $posts =  Post::where('group_id', $my_goup_ids)->whereNotIn('user_id', $blocked_user_ids)->whereNotIn('user_id', $deactivatedUsersIds)->with('user')->latest()->paginate($limit);
+        $posts =  Post::whereIn('group_id', $my_goup_ids)->whereNotIn('user_id', $blocked_user_ids)->whereNotIn('user_id', $deactivatedUsersIds)->with('user')->latest()->paginate($limit);
 
         // $data = new Paginator($group, 20);
         // $data = $data->setPath(url()->current());

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\ContactUsController;
 use App\Http\Controllers\Api\V1\GroupController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostLikesController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -97,6 +98,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         Route::prefix('user')->group(function () {
             Route::get('/', [UserController::class, 'show']);
             Route::post('update', [UserController::class, 'update']);
+            Route::post('update/notification-setting', [UserController::class, 'update_notification_mood']);
             Route::post('block', [UserController::class, 'block']);
             Route::post('unblock', [UserController::class, 'unblock']);
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);
@@ -104,6 +106,18 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('deactivate-account', [UserController::class, 'deactivateAccount']);
             // Update User device token for notification
             Route::post('device-token', [UserController::class, 'updateDeviceToken']);
+
+            //Get All Notifications
+            Route::get('/notifications', [NotificationController::class, 'notifications']);
+            
+            //Delete Notification
+            Route::delete('delete-notification', [NotificationController::class, 'deleteNotification']);
+
+            //Read Notification
+            Route::post('read-notification', [NotificationController::class, 'readNotification']);
+
+            //Read Notification
+            Route::post('read-notifications', [NotificationController::class, 'readNotifications']);
         });
 
         /*

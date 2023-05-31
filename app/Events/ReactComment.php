@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Post;
+use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,19 +12,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReactPost implements ShouldBroadcast
+class ReactComment implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $post;
+    public $comment;
     public $action;
     public $user;
+
     /**
      * Create a new event instance.
      */
-    public function __construct(Post $post, User $user, string $action)
+    public function __construct(Comment $comment, User $user, string $action)
     {
-        $this->post = $post;
+        $this->comment = $comment;
         $this->action = $action;
         $this->user = $user;
     }
@@ -36,6 +37,6 @@ class ReactPost implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('post.' . $this->post->id );
+        return new PrivateChannel('comment.' . $this->comment->id );
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostLike;
 use App\Models\User;
+use App\Notifications\UserNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -56,6 +57,8 @@ class PostLikesController extends ApiController
             }
 
             $user = User::where('id', auth()->id())->first();
+            $post = Post::find($request->post_id);
+            $post_owner = User::find($post->user_id);
 
             // Check if record existis already
             $likeOldRecord = PostLike::where(['user_id' => Auth::id(), 'post_id' => $post_id])->first();
@@ -66,11 +69,16 @@ class PostLikesController extends ApiController
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
+                        broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
+                        // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                     } else {
                         PostLike::where(['user_id' => auth()->id(), 'post_id' => $post_id])
                             ->update([
                                 'is_liked' => NULL
                             ]);
+                        
+                        broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
+                        
 
                         return $this->SuccessResponse($this->dataDeleted, null);
                     }
@@ -80,18 +88,18 @@ class PostLikesController extends ApiController
                             'is_liked' => 1
                             
                         ]);
+                        broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
+                        // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                         // Get sender avatar
-                        $userPhoto = null;
-                        $userPhoto = $user->getFirstMediaUrl('profile_images', 'avatar');
-                        // broadcast(new ReactPost($likeOldRecord, $likesCounter, $userPhoto))->toOthers();
+                        broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
+                        // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                     } else {
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
-                        // Get sender avatar
-                        $userPhoto = null;
-                        // $userPhoto = $user2->getFirstMediaUrl('profile_images', 'avatar');
-                        // broadcast(new ReactPost($request->user_id, $likesCounter, $userPhoto))->toOthers();
+                        
+                        broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
+                        // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                     }
 
                     return $this->SuccessResponse($this->dataRetrieved, [
@@ -103,7 +111,12 @@ class PostLikesController extends ApiController
                 $likeRecord->is_liked = $request->is_liked;
                 $likeRecord->post_id = $post_id;
                 $user->postLikes()->save($likeRecord);
+                broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
                 
+                if($post_owner->is_notification_on){
+                    
+                    $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
+                }
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,
                 ]);

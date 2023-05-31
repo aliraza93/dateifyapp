@@ -88,6 +88,32 @@ class UserController extends ApiController
         }
     }
 
+    public function update_notification_mood(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'is_notification_on'      => 'required|boolean',
+            
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+            $user = User::find(Auth::id());
+            $user->is_notification_on = $request->is_notification_on;
+            $user->save();
+            return $this->SuccessResponse(
+                $this->dataUpdated,
+                [
+                    'user' => $user
+                ]
+            );
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
 
     // Block any user
     public function block(Request $request)
