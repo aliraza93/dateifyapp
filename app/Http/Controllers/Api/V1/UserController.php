@@ -243,10 +243,31 @@ class UserController extends ApiController
 
             $user->is_deactivated = true;
             $user->save();
-            
+
             return $this->SuccessResponse('User deactivated successfully.', [
                 'record' => $user
             ]);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
+    public function updateDeviceToken(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'device_token' => 'required|string',
+            ]);
+            
+            //Send failed response if request is not valid
+            if ($validator->fails()) {
+                return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+            }
+            
+            $user = User::find(Auth::id());
+            $user->device_token = $request->device_token;
+            $user->update();
+            return $this->SuccessResponse($this->dataUpdated, null);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
