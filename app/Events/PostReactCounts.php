@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Comment;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,22 +12,25 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReactComment implements ShouldBroadcast
+class PostReactCounts implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $comment;
-    public $action;
+    public $post;
+    public $likes_count;
+    public $dislikes_count;
+    public $total_reacts;
     public $user;
-
     /**
      * Create a new event instance.
      */
-    public function __construct(Comment $comment, User $user, string $action)
+    public function __construct(Post $post, User $user, $likes_count, $dislikes_count, $total_reacts)
     {
-        $this->comment = $comment;
-        $this->action = $action;
+        $this->post = $post;
         $this->user = $user;
+        $this->likes_count = $likes_count;
+        $this->dislikes_count = $dislikes_count;
+        $this->total_reacts = $total_reacts;
     }
 
     /**
@@ -37,6 +40,6 @@ class ReactComment implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('comment.' . $this->comment->post_id );
+        return new PrivateChannel('post.' . $this->post->id );
     }
 }
