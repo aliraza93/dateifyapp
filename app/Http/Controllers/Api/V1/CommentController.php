@@ -111,7 +111,8 @@ class CommentController extends ApiController
             $newcomment = Comment::where('id', $comment->id)->first();
             
             broadcast(new EventsComment($post, $newcomment, $request->parent_comment_id, $user))->toOthers();
-            if($post_owner->id != $post->user_id){
+            
+            if($post_owner->id != $newcomment->user_id){
                 if($post_owner->is_notification_on){
 
                     $post_owner->notify(new UserNotify($user, 'Comment on your post', 'post_comment' ));
