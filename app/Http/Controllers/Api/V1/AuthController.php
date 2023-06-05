@@ -25,7 +25,6 @@ class AuthController extends ApiController
         }
 
         try {
-
             // Generate an OTP
             $otp =  Otp::setValidity(5)  // otp validity time in mins
                 ->setLength(4)  // Lenght of the generated otp

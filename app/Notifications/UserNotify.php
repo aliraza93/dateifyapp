@@ -15,15 +15,17 @@ class UserNotify extends Notification
     public $user;
     public $message;
     public $notification_type;
+    public $post_id;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $user, $message, $notification_type)
+    public function __construct(User $user, $message, $notification_type, $post_id)
     {
-     $this->user = $user;
-     $this->message = $message;
-     $this->notification_type = $notification_type;
+        $this->user = $user;
+        $this->message = $message;
+        $this->notification_type = $notification_type;
+        $this->post_id = $post_id;
     }
 
     /**
@@ -36,13 +38,14 @@ class UserNotify extends Notification
         return ['database', 'broadcast'];
     }
 
-    
+
     public function toDatabase($notifiable)
     {
         return [
             'message' => $this->message,
             'notification_type' => 'new_like',
             'user_id' =>     $this->user->id,
+            'post_id' => $this->post_id,
         ];
     }
 
@@ -57,7 +60,7 @@ class UserNotify extends Notification
             'message' => $this->message,
             'notification_type' => $this->notification_type,
             'user' => $this->user,
-
+            'post_id' => $this->post_id,
         ]);
     }
 }

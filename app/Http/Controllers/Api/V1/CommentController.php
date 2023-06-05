@@ -115,7 +115,7 @@ class CommentController extends ApiController
             if($post_owner->id != $newcomment->user_id){
                 if($post_owner->is_notification_on){
 
-                    $post_owner->notify(new UserNotify($user, 'Comment on your post', 'post_comment' ));
+                    $post_owner->notify(new UserNotify($user, 'commented on your post', 'post_comment', $post->id ));
                 }
             }
 
@@ -205,11 +205,11 @@ class CommentController extends ApiController
               
                 if($comment_owner->is_notification_on){
                     
-                    $comment_owner->notify(new UserNotify($user, 'React on your comment', 'comment_reaction' ));
+                    $comment_owner->notify(new UserNotify($user, 'React on your comment', 'comment_reaction', $post->id ));
                 }
                 if($post_owner->is_notification_on){
                     
-                    $post_owner->notify(new UserNotify($user, 'React on your post comment', 'comment_reaction' ));
+                    $post_owner->notify(new UserNotify($user, 'React on your post comment', 'comment_reaction', $post->id ));
                 }
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,
