@@ -29,7 +29,7 @@ class UserController extends ApiController
             if (!$user) {
                 return $this->ErrorResponse('No user found in our database. Please try again', null, null);
             }
-            $user = User::where('id', auth()->id())->first()->append('images');
+            $user = User::where('id', auth()->id())->with('notificationSettings')->first()->append('images');
 
             return $this->SuccessResponse($this->dataRetrieved, [
                 'user' => $user,
