@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserNotificationSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -159,6 +160,8 @@ class AuthController extends ApiController
                 $user->dob = Carbon::parse($request->dob);
                 $user->save();
 
+                $this->createNotificationSettings($user);
+
                 $file = $request->file('photo');
 
                 if ($file) {
@@ -302,5 +305,12 @@ class AuthController extends ApiController
         Auth::loginUsingId($user_id);
         $user = User::where('id',  $user_id)->first()->append('images');
         return $user;
+    }
+
+    // Create Notification settings of user
+    public function createNotificationSettings($user)
+    {
+        $notification = new UserNotificationSettings();
+        $user->settings()->save($notification);
     }
 }

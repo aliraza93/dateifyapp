@@ -165,4 +165,12 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(ContactUs::class);
     }
+
+    /**
+     * Notification settings
+     */
+    public function notificationSettings()
+    {
+        return $this->hasMany(UserNotificationSettings::class);
+    }
 }

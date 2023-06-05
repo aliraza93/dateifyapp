@@ -19,15 +19,17 @@ class ReactComment implements ShouldBroadcast
     public $comment;
     public $action;
     public $user;
+    public $post_id;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Comment $comment, User $user, string $action)
+    public function __construct(Comment $comment, User $user, string $action, $post_id)
     {
         $this->comment = $comment;
         $this->action = $action;
         $this->user = $user;
+        $this->post_id = $post_id;
     }
 
     /**

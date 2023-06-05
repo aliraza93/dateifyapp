@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\BlockUser;
 use App\Models\User;
+use App\Models\UserNotificationSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Twilio\Rest\Client;
@@ -59,7 +60,7 @@ class ApiController extends Controller
     {
         $login_id = Auth::id();
         $block_users = BlockUser::where('user_id', $login_id)->orWhere('blocked_user_id', $login_id)->get();
-        
+
         $ids = $block_users->map(function ($item) {
             if ($item->user_id === auth()->id()) {
                 return $item->blocked_user_id;
@@ -111,25 +112,113 @@ class ApiController extends Controller
     }
 
     // Send OTP to phone number
-  public function sendOtp($number, $otp)
-  {
-    
-    try {
-      $sid    = "AC59b6155fa6212afbb8130715e0b57f11";
-      $token  = "16d5f42d269c620c7a15e88dcea8c160";
-      $twilio = new Client($sid, $token);
+    public function sendOtp($number, $otp)
+    {
 
-      $twilio->messages
-        ->create(
-          $number, // to 
-          array(
-            "messagingServiceSid" => "MG2564fe869ffd8c9f74c185a8e5983722",
-            "body" =>$otp . " is your verification code for Dateify."
-          )
-        );
-    } catch (\Exception $e) {
-      return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        try {
+            $sid    = "AC59b6155fa6212afbb8130715e0b57f11";
+            $token  = "16d5f42d269c620c7a15e88dcea8c160";
+            $twilio = new Client($sid, $token);
+
+            $twilio->messages
+                ->create(
+                    $number, // to 
+                    array(
+                        "messagingServiceSid" => "MG2564fe869ffd8c9f74c185a8e5983722",
+                        "body" => $otp . " is your verification code for Dateify."
+                    )
+                );
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
     }
 
-  }
+    //Push Notification
+    public function sendPushNotification($user, $title, $body, $image, $type, $sender_id)
+    {
+        $firebaseToken = User::whereNotNull('device_token')->where('id', $user->id)->pluck('device_token')->all();
+        $SERVER_API_KEY = 'AAAA3552Pik:APA91bEY34MscdqW8DRkjVrTU3auVwTnfbzBWDjWrKpUVAAEGmsLCsops6kCitbaIF3_6ypo_mph8HXKdIuGkDQm5B8Mr1ySb3oSi8eEbjjLJq53PqRdCndT6RvL7qAieOOHm1pLMMLL';
+        $userBadgeCount = $this->userBadgeCount($user->id);
+
+        $user = User::where('id', $sender_id)
+            ->first();
+        $sound = 'notification.wav';
+
+        $data = [
+            "registration_ids" => $firebaseToken,
+            "image" => $image,
+            "icon" => $image,
+            "notification" => [
+                "title" => $title,
+                "body" => $body,
+                "badge" => $userBadgeCount,
+                "sound" => $sound,
+                "soundName" => $sound,
+                "image" => $image,
+                "icon" => $image,
+            ],
+            "apns" => [
+                "payload" => [
+                    "aps" => [
+                        "mutable-content" => 1,
+                        "image" => $image,
+                        "icon" => $image,
+                    ],
+                    "image" => $image,
+                    "icon" => $image,
+                ],
+                "fcm_options" => [
+                    "image" => $image,
+                    "icon" => $image,
+                ]
+            ],
+            "android" => [
+                "notification" => [
+                    "image" => $image,
+                    "icon" => $image,
+                ]
+            ],
+
+            "data" => [
+                'type' => $type,
+                'user' => $user,
+                "image" => $image,
+                "icon" => $image,
+
+            ],
+        ];
+
+        $dataString = json_encode($data);
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        $response = curl_exec($ch);
+        // dd($response);
+    }
+
+    /*
+  #####################################
+  #
+  #   Get Unreaded Notifications Count of current user
+  #   Return true|false 
+  #
+  ####################################
+  */
+    public function userBadgeCount($user_id)
+    {
+        $user = User::find($user_id);
+        $unreaded_notifications_count = 0;
+        if ($user->unreadNotifications != null) {
+            $unreaded_notifications_count = $user->unreadNotifications->count();
+        }
+        return $unreaded_notifications_count;
+    }
 }

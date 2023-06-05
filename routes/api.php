@@ -98,7 +98,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         Route::prefix('user')->group(function () {
             Route::get('/', [UserController::class, 'show']);
             Route::post('update', [UserController::class, 'update']);
-            Route::post('update/notification-setting', [UserController::class, 'update_notification_mood']);
+            Route::post('update/notification-setting', [UserController::class, 'updateNotificationSettings']);
             Route::post('block', [UserController::class, 'block']);
             Route::post('unblock', [UserController::class, 'unblock']);
             Route::post('blocked-list', [UserController::class, 'myBlockedList']);

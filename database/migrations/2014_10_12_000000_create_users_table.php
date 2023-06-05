@@ -19,7 +19,6 @@ return new class extends Migration
             $table->date('dob');
             $table->string('phone');
             $table->boolean('id_verified')->default(0);
-            $table->boolean('is_notification_on')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });

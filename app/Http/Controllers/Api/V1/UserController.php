@@ -10,6 +10,7 @@ use App\Models\GroupUser;
 use App\Models\Post;
 use App\Models\ReportComment;
 use App\Models\User;
+use App\Models\UserNotificationSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -88,11 +89,12 @@ class UserController extends ApiController
         }
     }
 
-    public function update_notification_mood(Request $request)
+    public function updateNotificationSettings(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'is_notification_on'      => 'required|boolean',
-            
+            'comments_notifications' => 'required|boolean',
+            'posts_notifications' => 'required|boolean',
+
         ]);
 
         if ($validator->fails()) {
@@ -100,15 +102,37 @@ class UserController extends ApiController
         }
 
         try {
-            $user = User::find(Auth::id());
-            $user->is_notification_on = $request->is_notification_on;
-            $user->save();
-            return $this->SuccessResponse(
-                $this->dataUpdated,
-                [
-                    'user' => $user
-                ]
-            );
+            $user = User::find(auth()->id());
+            $users_setting = UserNotificationSettings::where('user_id', $user->id)->first();
+            $check = true;
+            if (!$users_setting) {
+                $users_setting = new UserNotificationSettings();
+                $check = false;
+            }
+
+            // Check if settings contain comments_notifications
+            if ($request->filled('comments_notifications')) {
+                $users_setting->comments_notifications =  $request->comments_notifications;
+            }
+
+            // Check if $users_setting contain posts_notifications
+            if ($request->filled('posts_notifications')) {
+                $users_setting->posts_notifications =  $request->posts_notifications;
+            }
+
+            // Check if $users_setting contain in_app_notifications
+            if ($request->filled('in_app_notifications')) {
+                $users_setting->in_app_notifications =  $request->in_app_notifications;
+            }
+
+            if ($check) {
+                $users_setting->update();
+            } else {
+                $user->notificationSettings()->save($users_setting);
+            }
+            return $this->SuccessResponse($this->dataUpdated, [
+                'User' => $users_setting
+            ]);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
@@ -284,12 +308,12 @@ class UserController extends ApiController
             $validator = Validator::make($request->all(), [
                 'device_token' => 'required|string',
             ]);
-            
+
             //Send failed response if request is not valid
             if ($validator->fails()) {
                 return $this->ErrorResponse($this->validationError, $validator->errors(), null);
             }
-            
+
             $user = User::find(Auth::id());
             $user->device_token = $request->device_token;
             $user->update();
