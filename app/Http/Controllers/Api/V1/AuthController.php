@@ -311,6 +311,6 @@ class AuthController extends ApiController
     public function createNotificationSettings($user)
     {
         $notification = new UserNotificationSettings();
-        $user->settings()->save($notification);
+        $user->notificationSettings()->save($notification);
     }
 }
