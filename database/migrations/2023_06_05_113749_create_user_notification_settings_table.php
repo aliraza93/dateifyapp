@@ -16,7 +16,7 @@ return new class extends Migration
             $table->boolean('comments_notifications')->default(true);
             $table->boolean('posts_notifications')->default(true);
             $table->boolean('in_app_notifications')->default(true);
-            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
