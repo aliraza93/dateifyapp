@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Events\PostReactCounts;
 use App\Events\ReactPost;
 use App\Http\Controllers\Controller;
+use App\Models\Group;
 use App\Models\Post;
 use App\Models\PostLike;
 use App\Models\User;
@@ -70,7 +71,7 @@ class PostLikesController extends ApiController
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
-                        broadcast(new ReactPost($post, $user, $request->is_liked, $post->group_id))->toOthers();
+                        broadcast(new ReactPost($post, $user, $request->is_liked, Group::find($post->group_id)))->toOthers();
                         // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                     } else {
                         PostLike::where(['user_id' => auth()->id(), 'post_id' => $post_id])
@@ -78,13 +79,13 @@ class PostLikesController extends ApiController
                                 'is_liked' => NULL
                             ]);
 
-                        broadcast(new ReactPost($post, $user, $request->is_liked, $post->group_id))->toOthers();
+                        broadcast(new ReactPost($post, $user, $request->is_liked, Group::find($post->group_id)))->toOthers();
 
                         $likes_count = PostLike::where(['is_liked' => 1, 'post_id' => $post_id])->count();
                         $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post_id])->count();
                         $total_reacts = PostLike::where('post_id', $post_id)->count();
                         $comments_count = $post->comments->count();
-                        broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, $post->group_id))->toOthers();
+                        broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
                         return $this->SuccessResponse($this->dataDeleted, null);
                     }
                 } else {
@@ -93,7 +94,7 @@ class PostLikesController extends ApiController
                             'is_liked' => 1
 
                         ]);
-                        broadcast(new ReactPost($post, $user, $request->is_liked, $post->group_id))->toOthers();
+                        broadcast(new ReactPost($post, $user, $request->is_liked, Group::find($post->group_id)))->toOthers();
                         // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                         // Get sender avatar
                         // broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
@@ -103,7 +104,7 @@ class PostLikesController extends ApiController
                             'is_liked' => 0
                         ]);
 
-                        broadcast(new ReactPost($post, $user, $request->is_liked, $post->group_id))->toOthers();
+                        broadcast(new ReactPost($post, $user, $request->is_liked, Group::find($post->group_id)))->toOthers();
                         // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                     }
                     if ($request->is_liked) {
@@ -113,7 +114,7 @@ class PostLikesController extends ApiController
                     $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post_id])->count();
                     $total_reacts = PostLike::where('post_id', $post_id)->count();
                     $comments_count = $post->comments->count();
-                    broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, $post->group_id))->toOthers();
+                    broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
 
 
                     return $this->SuccessResponse($this->dataRetrieved, [
@@ -125,16 +126,16 @@ class PostLikesController extends ApiController
                 $likeRecord->is_liked = $request->is_liked;
                 $likeRecord->post_id = $post_id;
                 $user->postLikes()->save($likeRecord);
-                broadcast(new ReactPost($post, $user, $request->is_liked, $post->group_id))->toOthers();
+                broadcast(new ReactPost($post, $user, $request->is_liked, Group::find($post->group_id)))->toOthers();
                 if ($post_owner->notificationSettings != null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
-                    $post_owner->notify(new UserNotify($user, 'reacted on your post', 'post_reaction', $post_id, $post->group_id));
+                    $post_owner->notify(new UserNotify($user, 'reacted on your post', 'post_reaction', $post_id, Group::find($post->group_id)));
                 }
 
                 $likes_count = PostLike::where(['is_liked' => 1, 'post_id' => $post_id])->count();
                 $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post_id])->count();
                 $total_reacts = PostLike::where('post_id', $post_id)->count();
                 $comments_count = $post->comments->count();
-                broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, $post->group_id))->toOthers();
+                broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
                 if ($request->is_liked) {
                     $this->sendPushNotification($post_owner, 'New Post React', $user->name . ' liked your post!',  $user->avatar, 'react_post', $user->id);
                 }
