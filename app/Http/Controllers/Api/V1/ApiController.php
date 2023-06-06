@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BlockUser;
 use App\Models\User;
 use App\Models\UserNotificationSettings;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Twilio\Rest\Client;
@@ -130,6 +131,64 @@ class ApiController extends Controller
                 );
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
+    // Fetch timezone
+    public static function fetchChatTimeZone()
+    {
+        //Get current Ip and Update Time According to it
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        if ($ip == '127.0.0.1') {
+            $request = new Request();
+            $ip = $request->ip;
+        }
+
+        $ipInfo = file_get_contents('http://ip-api.com/json/' . $ip);
+        $ipInfo = json_decode($ipInfo);
+        return $ipInfo->timezone;
+    }
+
+    public function setTimezone($timezone, $created_at)
+    {
+        // $time = (new DateTime($created_at, new DateTimeZone('UTC')))
+        //   ->setTimezone(new DateTimeZone($timezone))
+        //   ->format('Y-m-d H:i:s');
+        // $time = Carbon::parse($time);
+        $time = Carbon::parse($created_at)->setTimezone($timezone);
+        return $time;
+    }
+
+    public function getTime($timezone, $created_at, $value)
+    {
+
+        $current_meesage_date_time = $this->setTimezone($timezone, $created_at);
+        if ($this->setTimezone($timezone, Carbon::now()->subDays(7)) <= $current_meesage_date_time) {
+            if ($current_meesage_date_time->isToday()) {
+                if ($value) {
+                    return  $current_meesage_date_time->format('g:i A');
+                } else {
+                    return  'Today';
+                }
+            }
+
+            // Check if message is sent yesterday
+            elseif ($current_meesage_date_time->isYesterday()) {
+                return 'Yesterday';
+            }
+
+            // Check if messages is sent before yesterday
+            else {
+                return $current_meesage_date_time->format('l');
+            }
+        } else {
+            return  $current_meesage_date_time->format('d/m/Y');
         }
     }
 

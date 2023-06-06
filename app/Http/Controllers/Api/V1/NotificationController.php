@@ -20,16 +20,16 @@ class NotificationController extends ApiController
         try {
             $user = Auth::user();
             $notifications = $user->notifications()->simplePaginate(20);
-            // $timezone =  $this->fetchTimeZone();
+            $timezone =  $this->fetchTimeZone();
             $users_ids = $notifications->map(function ($q) {
                 return $q->data['user_id'];
             });
 
             $users = User::whereIn('id', $users_ids)->get();
             foreach ($notifications as $notification) {
-                // $notification->time = $this->setTimezone($timezone, $notification->created_at)->format('g:i A');
-                // $notification->sent_at = $this->getTime($timezone, $notification->created_at, true);
-                // $notification->time_miliseconds = $this->setTimezone($timezone, $notification->created_at)->valueOf();
+                $notification->time = $this->setTimezone($timezone, $notification->created_at)->format('g:i A');
+                $notification->sent_at = $this->getTime($timezone, $notification->created_at, true);
+                $notification->time_miliseconds = $this->setTimezone($timezone, $notification->created_at)->valueOf();
                 $notification->human_readable = $notification->created_at->diffForHumans();
                 $notification->message = $notification['data']['message'];
                 $notification->notification_type = $notification['data']['notification_type'];
