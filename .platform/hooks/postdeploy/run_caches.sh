@@ -12,4 +12,4 @@
 # php artisan view:cache
 
 # php artisan cache:clear
-php artisan optimize
+php artisan optimize:clear
