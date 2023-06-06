@@ -112,6 +112,33 @@ class ApiController extends Controller
         return array_values($suggestions); // Re-index the array keys
     }
 
+    /*
+    #####################################
+    #
+    #   Fetch and return Set Time Zone 
+    #   Return Day 
+    #
+    ####################################
+    */
+    public function fetchTimeZone()
+    {
+        //Get current Ip and Update Time According to it
+        $ip = $_SERVER['REMOTE_ADDR'];
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        if ($ip == '127.0.0.1') {
+            $request = new Request();
+            $ip = $request->ip;
+        }
+
+        $ipInfo = file_get_contents('http://ip-api.com/json/' . $ip);
+        $ipInfo = json_decode($ipInfo);
+        return $ipInfo->timezone;
+    }
+
     // Send OTP to phone number
     public function sendOtp($number, $otp)
     {
