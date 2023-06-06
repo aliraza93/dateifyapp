@@ -91,11 +91,10 @@ class CommentController extends ApiController
 
             $post = Post::where('id', $request->post_id)->first();
             $user = User::find(auth()->id());
-
             if (!$post) {
                 return $this->ErrorResponse('No post record found in our database. Please try again', null, null);
             }
-
+            
             $post_owner = User::find($post->user_id);
             $comment = new Comment();
             $comment->body = $request->body;
@@ -113,11 +112,12 @@ class CommentController extends ApiController
             $newcomment = Comment::where('id', $comment->id)->first();
 
             broadcast(new EventsComment($post, $newcomment, $request->parent_comment_id, $user))->toOthers();
-            $post_owner->notify(new UserNotify($user, 'commented on your post', 'post_comment', $post->id));
 
             if ($post_owner->id != $newcomment->user_id) {
-                if ($post_owner->notificationSettings == null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
+                if ($post_owner->notificationSettings != null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
+                    $post_owner->notify(new UserNotify($user, 'commented on your post', 'post_comment', $post->id));
                 }
+                
             }
 
             $likes_count = PostLike::where(['is_liked' => 1, 'post_id' => $post->id])->count();
@@ -214,10 +214,10 @@ class CommentController extends ApiController
 
                 broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
 
-                if ($comment_owner->notificationSettings == null && $comment_owner->notificationSettings->in_app_notifications && $comment_owner->notificationSettings->comments_notifications) {
+                if ($comment_owner->notificationSettings != null && $comment_owner->notificationSettings->in_app_notifications && $comment_owner->notificationSettings->comments_notifications) {
                     $comment_owner->notify(new UserNotify($user, 'reacted on your comment', 'comment_reaction', $post->id));
                 }
-                if ($comment_owner->notificationSettings == null && $comment_owner->notificationSettings->in_app_notifications && $comment_owner->notificationSettings->comments_notifications) {
+                if ($comment_owner->notificationSettings != null && $comment_owner->notificationSettings->in_app_notifications && $comment_owner->notificationSettings->comments_notifications) {
                     $post_owner->notify(new UserNotify($user, 'reacted on your post comment', 'comment_reaction', $post->id));
                 }
                 if ($request->is_liked) {

@@ -126,7 +126,7 @@ class PostLikesController extends ApiController
                 $likeRecord->post_id = $post_id;
                 $user->postLikes()->save($likeRecord);
                 broadcast(new ReactPost($post, $user, $request->is_liked))->toOthers();
-                if ($post_owner->notificationSettings == null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
+                if ($post_owner->notificationSettings != null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
                     $post_owner->notify(new UserNotify($user, 'reacted on your post', 'post_reaction', $post_id));
                 }
 
