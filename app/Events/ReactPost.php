@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Group;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -19,14 +20,16 @@ class ReactPost implements ShouldBroadcast
     public $post;
     public $action;
     public $user;
+    public $group;
     /**
      * Create a new event instance.
      */
-    public function __construct(Post $post, User $user, string $action)
+    public function __construct(Post $post, User $user, string $action, Group $group)
     {
         $this->post = $post;
         $this->action = $action;
         $this->user = $user;
+        $this->group = $group;
     }
 
     /**

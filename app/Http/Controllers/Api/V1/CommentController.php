@@ -111,11 +111,11 @@ class CommentController extends ApiController
             }
             $newcomment = Comment::where('id', $comment->id)->first();
 
-            broadcast(new EventsComment($post, $newcomment, $request->parent_comment_id, $user))->toOthers();
+            broadcast(new EventsComment($post, $newcomment, $request->parent_comment_id, $user, $post->group_id))->toOthers();
 
             if ($post_owner->id != $newcomment->user_id) {
                 if ($post_owner->notificationSettings != null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
-                    $post_owner->notify(new UserNotify($user, 'commented on your post', 'post_comment', $post->id));
+                    $post_owner->notify(new UserNotify($user, 'commented on your post', 'post_comment', $post->id, $post->group_id));
                 }
                 
             }
@@ -124,7 +124,7 @@ class CommentController extends ApiController
             $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post->id])->count();
             $total_reacts = PostLike::where('post_id', $post->id)->count();
             $comments_count = $post->comments->count();
-            broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count))->toOthers();
+            broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, $post->group_id))->toOthers();
 
             return $this->SuccessResponse($this->dataCreated, [
                 'comment' => $comment
@@ -173,7 +173,7 @@ class CommentController extends ApiController
             if ($likeOldRecord) {
                 if ($likeOldRecord->is_liked == $request->is_liked) {
                     if ($likeOldRecord->is_liked == '' && $request->is_liked == 0) {
-                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, $post->group_id))->toOthers();
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
@@ -181,7 +181,7 @@ class CommentController extends ApiController
                         CommentLike::where(['user_id' => auth()->id(), 'comment_id' => $comment_id])->update([
                             'is_liked' => NULL
                         ]);
-                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, $post->group_id))->toOthers();
 
                         return $this->SuccessResponse($this->dataDeleted, null);
                     }
@@ -190,9 +190,9 @@ class CommentController extends ApiController
                         $likeOldRecord->update([
                             'is_liked' => 1
                         ]);
-                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, $post->group_id))->toOthers();
                     } else {
-                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, $post->group_id))->toOthers();
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
@@ -212,13 +212,13 @@ class CommentController extends ApiController
                 $likeRecord->comment_id = $comment_id;
                 $user->commentLikes()->save($likeRecord);
 
-                broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
+                broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, $post->group_id))->toOthers();
 
                 if ($comment_owner->notificationSettings != null && $comment_owner->notificationSettings->in_app_notifications && $comment_owner->notificationSettings->comments_notifications) {
-                    $comment_owner->notify(new UserNotify($user, 'reacted on your comment', 'comment_reaction', $post->id));
+                    $comment_owner->notify(new UserNotify($user, 'reacted on your comment', 'comment_reaction', $post->id, $post->group_id));
                 }
                 if ($comment_owner->notificationSettings != null && $comment_owner->notificationSettings->in_app_notifications && $comment_owner->notificationSettings->comments_notifications) {
-                    $post_owner->notify(new UserNotify($user, 'reacted on your post comment', 'comment_reaction', $post->id));
+                    $post_owner->notify(new UserNotify($user, 'reacted on your post comment', 'comment_reaction', $post->id, $post->group_id));
                 }
                 if ($request->is_liked) {
                     $this->sendPushNotification($comment_owner, 'New Comment React', $user->name . ' liked your comment!',  $user->avatar, 'react_comment', $user->id);

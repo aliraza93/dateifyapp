@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Comment as ModelsComment;
+use App\Models\Group;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -24,12 +25,15 @@ class Comment implements ShouldBroadcast
     public $comment;
     public $parent_comment_id;
     public $user;
-    public function __construct(Post $post, ModelsComment $comment, $parent_comment_id, User $user)
+    public $group;
+
+    public function __construct(Post $post, ModelsComment $comment, $parent_comment_id, User $user, Group $group)
     {
         $this->post = $post;
         $this->comment = $comment;
         $this->parent_comment_id = $parent_comment_id;
         $this->user = $user;
+        $this->group = $group;
     }
 
     /**

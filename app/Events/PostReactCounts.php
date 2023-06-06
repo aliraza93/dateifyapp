@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Group;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -22,10 +23,11 @@ class PostReactCounts implements ShouldBroadcast
     public $total_reacts;
     public $user;
     public $comments_count;
+    public $group;
     /**
      * Create a new event instance.
      */
-    public function __construct(Post $post, User $user, $likes_count, $dislikes_count, $total_reacts, $comments_count)
+    public function __construct(Post $post, User $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group $group)
     {
         $this->post = $post;
         $this->user = $user;
@@ -33,6 +35,7 @@ class PostReactCounts implements ShouldBroadcast
         $this->dislikes_count = $dislikes_count;
         $this->total_reacts = $total_reacts;
         $this->comments_count = $comments_count;
+        $this->group = $group;
     }
 
     /**

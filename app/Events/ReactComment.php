@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Comment;
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -20,16 +21,18 @@ class ReactComment implements ShouldBroadcast
     public $action;
     public $user;
     public $post_id;
+    public $group;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Comment $comment, User $user, string $action, $post_id)
+    public function __construct(Comment $comment, User $user, string $action, $post_id, Group $group)
     {
         $this->comment = $comment;
         $this->action = $action;
         $this->user = $user;
         $this->post_id = $post_id;
+        $this->group = $group;
     }
 
     /**

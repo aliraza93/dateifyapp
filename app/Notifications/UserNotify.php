@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Group;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -19,17 +20,19 @@ class UserNotify extends Notification
     public $notification_type;
     public $post_id;
     public $created_at;
+    public $group;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $user, $message, $notification_type, $post_id)
+    public function __construct(User $user, $message, $notification_type, $post_id, Group $group)
     {
         $this->user = $user;
         $this->message = $message;
         $this->notification_type = $notification_type;
         $this->post_id = $post_id;
         $this->created_at = Carbon::now();
+        $this->group = $group;
     }
 
     /**
@@ -50,6 +53,8 @@ class UserNotify extends Notification
             'notification_type' => 'new_like',
             'user_id' =>     $this->user->id,
             'post_id' => $this->post_id,
+            'group_id' => $this->group->id,
+            'group_name' => $this->group->name,
         ];
     }
 
@@ -70,6 +75,8 @@ class UserNotify extends Notification
             'notification_type' => $this->notification_type,
             'user' => $this->user,
             'post_id' => $this->post_id,
+            'group_id' => $this->group->id,
+            'group_name' => $this->group->name,
         ]);
     }
 
