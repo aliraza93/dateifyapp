@@ -181,7 +181,7 @@ class CommentController extends ApiController
                         CommentLike::where(['user_id' => auth()->id(), 'comment_id' => $comment_id])->update([
                             'is_liked' => NULL
                         ]);
-                        broadcast(new ReactComment($likeOldRecord, $user, $request->is_liked, $post->id))->toOthers();
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id))->toOthers();
 
                         return $this->SuccessResponse($this->dataDeleted, null);
                     }
