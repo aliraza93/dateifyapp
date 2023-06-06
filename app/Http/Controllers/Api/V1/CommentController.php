@@ -90,13 +90,13 @@ class CommentController extends ApiController
         try {
 
             $post = Post::where('id', $request->post_id)->first();
-            $post_owner = User::find($post->user_id);
             $user = User::find(auth()->id());
 
             if (!$post) {
                 return $this->ErrorResponse('No post record found in our database. Please try again', null, null);
             }
 
+            $post_owner = User::find($post->user_id);
             $comment = new Comment();
             $comment->body = $request->body;
             $comment->post_id = $post->id;
