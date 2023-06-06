@@ -32,6 +32,24 @@ class NotificationController extends ApiController
                 $notification->time_miliseconds = $this->setTimezone($timezone, $notification->created_at)->valueOf();
                 $notification->human_readable = $notification->created_at->diffForHumans();
                 $notification->message = $notification['data']['message'];
+                if (isset($notification['data']['post_id'])) {
+                    $notification->post_id = $notification['data']['post_id'];
+                } else {
+                    $notification->post_id = null;
+                }
+                
+                if (isset($notification['data']['group_id'])) {
+                    $notification->group_id = $notification['data']['group_id'];
+                } else {
+                    $notification->group_id = null;
+                }
+                
+                if (isset($notification['data']['group_name'])) {
+                    $notification->group_name = $notification['data']['group_name'];
+                } else {
+                    $notification->group_name = null;
+                }
+                
                 $notification->notification_type = $notification['data']['notification_type'];
 
                 foreach ($users as  $user) {

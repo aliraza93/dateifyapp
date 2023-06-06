@@ -51,7 +51,7 @@ class UserNotify extends Notification
         return [
             'message' => $this->message,
             'notification_type' => 'new_like',
-            'user_id' =>     $this->user->id,
+            'user_id' => $this->user->id,
             'post_id' => $this->post_id,
             'group_id' => $this->group->id,
             'group_name' => $this->group->name,

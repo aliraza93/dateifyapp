@@ -167,7 +167,7 @@ class AuthController extends ApiController
                 if ($file) {
                     $mediaItems = $user->addMedia($file)->toMediaCollection('profile_images');
                 }
-
+                $user = $this->loginDetails($user->id);
                 $jwt_token = $user->createToken('access-token')->plainTextToken;
 
                 return $this->SuccessResponse(
@@ -303,7 +303,7 @@ class AuthController extends ApiController
     public function loginDetails($user_id)
     {
         Auth::loginUsingId($user_id);
-        $user = User::where('id',  $user_id)->first()->append('images');
+        $user = User::where('id',  $user_id)->with('notificationSettings')->first()->append('images');
         return $user;
     }
 
