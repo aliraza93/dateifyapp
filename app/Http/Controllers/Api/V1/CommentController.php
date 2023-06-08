@@ -174,10 +174,10 @@ class CommentController extends ApiController
             if ($likeOldRecord) {
                 if ($likeOldRecord->is_liked == $request->is_liked) {
                     if ($likeOldRecord->is_liked == '' && $request->is_liked == 0) {
-                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, Group::find($post->group_id)))->toOthers();
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, Group::find($post->group_id)))->toOthers();
                     } else {
                         CommentLike::where(['user_id' => auth()->id(), 'comment_id' => $comment_id])->update([
                             'is_liked' => NULL
@@ -193,10 +193,10 @@ class CommentController extends ApiController
                         ]);
                         broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, Group::find($post->group_id)))->toOthers();
                     } else {
-                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, Group::find($post->group_id)))->toOthers();
                         $likeOldRecord->update([
                             'is_liked' => 0
                         ]);
+                        broadcast(new ReactComment($comment, $user, $request->is_liked, $post->id, Group::find($post->group_id)))->toOthers();
                     }
 
                     if ($request->is_liked) {
