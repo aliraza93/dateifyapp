@@ -60,8 +60,8 @@ class GroupController extends ApiController
         try {
 
             $group_validate = Group::find($request->group_id);
-            
-            if(!$group_validate){
+
+            if (!$group_validate) {
                 return $this->ErrorResponse('Group not found', null, null);
             }
 
@@ -119,7 +119,7 @@ class GroupController extends ApiController
         try {
             $deactivatedUsersIds = $this->deactivatedUserIds();
             $limit = $request->limit ? $request->limit : 20;
-            
+
             $isGlobal = $request->is_global;
             $searchTerm = $request->name;
 
@@ -129,15 +129,33 @@ class GroupController extends ApiController
                 // Search all groups by name
                 $groupsQuery->where('name', 'LIKE', '%' . $searchTerm . '%');
             } else {
-                // Search only joined groups by name
+                // Search within joined groups by name
                 $groupsQuery->where('name', 'LIKE', '%' . $searchTerm . '%')
-                            ->whereHas('users', function ($query) use ($deactivatedUsersIds) {
-                                $query->where('user_id', auth()->id());
-                                $query->whereNotIn('user_id', $deactivatedUsersIds);
-                            });
+                    ->whereHas('users', function ($query) use ($deactivatedUsersIds) {
+                        $query->where('users.id', auth()->id());
+                        $query->whereNotIn('users.id', $deactivatedUsersIds);
+                    });
             }
-            
+
+            // Add a subquery to order the results by joined groups on top and unjoined groups at the bottom
+            $groupsQuery->orderByRaw('(SELECT COUNT(*) FROM group_users WHERE group_users.group_id = groups.id AND group_users.user_id = ' . auth()->id() . ') DESC');
+
             $groups = $groupsQuery->paginate($limit);
+
+            // If the number of retrieved records is less than the limit and the search is not global,
+            // search within unjoined groups to complete the remaining records
+            if ($groups->count() < $limit && !$isGlobal) {
+                $unjoinedGroupsQuery = Group::where('name', 'LIKE', '%' . $searchTerm . '%')
+                    ->whereDoesntHave('users', function ($query) use ($deactivatedUsersIds) {
+                        $query->where('users.id', auth()->id());
+                        $query->whereNotIn('users.id', $deactivatedUsersIds);
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->take($limit - $groups->count())
+                    ->paginate($limit - $groups->count());
+
+                $groups = $groups->concat($unjoinedGroupsQuery);
+            }
 
             return $this->SuccessResponse($this->dataRetrieved, [
                 'groups' => $groups
