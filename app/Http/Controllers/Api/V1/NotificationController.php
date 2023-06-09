@@ -136,6 +136,9 @@ class NotificationController extends ApiController
         $user = User::find($user_id);
         if ($user) {
             $firebaseToken = User::whereNotNull('device_token')->where('id', $user->id)->pluck('device_token')->all();
+            if (!$firebaseToken) {
+                return $this->ErrorResponse('Device token is not stored for this user.', null, null);
+            }
             $SERVER_API_KEY = 'AAAA3552Pik:APA91bEY34MscdqW8DRkjVrTU3auVwTnfbzBWDjWrKpUVAAEGmsLCsops6kCitbaIF3_6ypo_mph8HXKdIuGkDQm5B8Mr1ySb3oSi8eEbjjLJq53PqRdCndT6RvL7qAieOOHm1pLMMLL';
 
             $user = User::where('id', auth()->id())
@@ -201,7 +204,7 @@ class NotificationController extends ApiController
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
             $response = curl_exec($ch);
-            return 'Notification sent successfully!';
+            return $this->SuccessResponse('Notification sent successfully!', $response);
         } else {
             return "Enter valid user id";
         }
