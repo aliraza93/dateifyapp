@@ -304,11 +304,7 @@ class AuthController extends ApiController
     {
         Auth::loginUsingId($user_id);
         $user = User::where('id',  $user_id)->with('notificationSettings')->first()->append('images');
-        if($user->is_deactivated){
-            $user->is_deactivated = 1;
-        }else {
-            $user->is_deactivated = 0;
-        }
+        
         return $user;
     }
 
