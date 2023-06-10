@@ -29,6 +29,7 @@ class NotificationController extends ApiController
             foreach ($notifications as $notification) {
                 $notification->time = $this->setTimezone($timezone, $notification->created_at)->format('g:i A');
                 $notification->sent_at = $this->getTime($timezone, $notification->created_at, true);
+                $notification->day = $this->getTime($timezone, $notification->created_at, false);
                 $notification->time_miliseconds = $this->setTimezone($timezone, $notification->created_at)->valueOf();
                 $notification->human_readable = $notification->created_at->diffForHumans();
                 $notification->message = $notification['data']['message'];
