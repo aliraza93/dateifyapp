@@ -127,7 +127,7 @@ class CommentController extends ApiController
             $comments_count = $post->comments->count();
             broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
 
-            $this->sendPushNotification($post_owner, 'New Comment React', $user->name . ' liked your comment!',  $user->avatar, 'react_comment', $user->id);
+            $this->sendPushNotification($post_owner, 'New Comment', $user->name . 'Commented on your post',  $user->avatar, 'new_comment', $user->id);
 
             return $this->SuccessResponse($this->dataCreated, [
                 'comment' => $comment
