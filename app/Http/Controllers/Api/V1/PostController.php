@@ -325,7 +325,7 @@ class PostController extends ApiController
                         $query->whereNotIn('comments.user_id', $blocked_user_ids);
                         $query->whereNotIn('childrenComments.user_id', $deactivatedUsersIds);
                         $query->whereNotIn('childrenComments.user_id', $blocked_user_ids);
-                    }
+                    }, 'user'
                 ])->first();
 
             return $this->SuccessResponse($this->dataRetrieved, [
