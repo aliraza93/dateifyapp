@@ -108,7 +108,7 @@ class PostLikesController extends ApiController
                         // $post_owner->notify(new UserNotify($user, 'React on your post', 'post_reaction' ));
                     }
                     if ($request->is_liked) {
-                        $this->sendPushNotification($post_owner, 'New Post React', $user->name . ' liked your post!',  $user->avatar, 'react_post', $user->id, $post, Group::find($post->group_id));
+                        $this->sendPushNotification($post_owner, 'New Post React', $user->name . ' liked your post!',  $user->avatar, 'react_post', $user->id, $post->id, $post->group_id);
                     }
                     $likes_count = PostLike::where(['is_liked' => 1, 'post_id' => $post_id])->count();
                     $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post_id])->count();
@@ -137,7 +137,7 @@ class PostLikesController extends ApiController
                 $comments_count = $post->comments->count();
                 broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
                 if ($request->is_liked) {
-                    $this->sendPushNotification($post_owner, 'New Post React', $user->name . ' liked your post!',  $user->avatar, 'react_post', $user->id, $post, Group::find($post->group_id));
+                    $this->sendPushNotification($post_owner, 'New Post React', $user->name . ' liked your post!',  $user->avatar, 'react_post', $user->id, $post->id, $post->group_id);
                 }
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,
