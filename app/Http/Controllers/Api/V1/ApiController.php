@@ -270,8 +270,8 @@ class ApiController extends Controller
                 'user' => $user,
                 "image" => $image,
                 "icon" => $image,
-                "group" => $group,
-                "post" => $post,
+                "group_id" => $group,
+                "post_id" => $post,
 
             ],
         ];
