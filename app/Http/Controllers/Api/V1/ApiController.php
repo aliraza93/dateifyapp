@@ -220,7 +220,7 @@ class ApiController extends Controller
     }
 
     //Push Notification
-    public function sendPushNotification($user, $title, $body, $image, $type, $sender_id)
+    public function sendPushNotification($user, $title, $body, $image, $type, $sender_id, $post, $group)
     {
         $firebaseToken = User::whereNotNull('device_token')->where('id', $user->id)->pluck('device_token')->all();
         $SERVER_API_KEY = 'AAAA3552Pik:APA91bEY34MscdqW8DRkjVrTU3auVwTnfbzBWDjWrKpUVAAEGmsLCsops6kCitbaIF3_6ypo_mph8HXKdIuGkDQm5B8Mr1ySb3oSi8eEbjjLJq53PqRdCndT6RvL7qAieOOHm1pLMMLL';
@@ -270,6 +270,8 @@ class ApiController extends Controller
                 'user' => $user,
                 "image" => $image,
                 "icon" => $image,
+                "group_id" => $group,
+                "post_id" => $post,
 
             ],
         ];

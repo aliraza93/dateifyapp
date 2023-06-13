@@ -304,6 +304,7 @@ class AuthController extends ApiController
     {
         Auth::loginUsingId($user_id);
         $user = User::where('id',  $user_id)->with('notificationSettings')->first()->append('images');
+        
         return $user;
     }
 

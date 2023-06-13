@@ -125,7 +125,10 @@ class CommentController extends ApiController
             $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post->id])->count();
             $total_reacts = PostLike::where('post_id', $post->id)->count();
             $comments_count = $post->comments->count();
+            
             broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
+
+            $this->sendPushNotification($post_owner, 'New Comment', $user->name . 'Commented on your post',  $user->avatar, 'new_comment', $user->id, $post->id, $post->group_id);
 
             return $this->SuccessResponse($this->dataCreated, [
                 'comment' => $comment
@@ -200,7 +203,7 @@ class CommentController extends ApiController
                     }
 
                     if ($request->is_liked) {
-                        $this->sendPushNotification($comment_owner, 'New Comment React', $user->name . ' liked your comment!',  $user->avatar, 'react_comment', $user->id);
+                        $this->sendPushNotification($comment_owner, 'New Comment React', $user->name . ' liked your comment!',  $user->avatar, 'react_comment', $user->id, $post->id, $post->group_id);
                     }
 
                     return $this->SuccessResponse($this->dataRetrieved, [
@@ -222,7 +225,7 @@ class CommentController extends ApiController
                     $post_owner->notify(new UserNotify($user, 'reacted on your post comment', 'comment_reaction', $post->id, Group::find($post->group_id)));
                 }
                 if ($request->is_liked) {
-                    $this->sendPushNotification($comment_owner, 'New Comment React', $user->name . ' liked your comment!',  $user->avatar, 'react_comment', $user->id);
+                    $this->sendPushNotification($comment_owner, 'New Comment React', $user->name . ' liked your comment!',  $user->avatar, 'react_comment', $user->id, $post->id, $post->group_id);
                 }
                 return $this->SuccessResponse($this->dataRetrieved, [
                     'likeRecord' => $likeRecord,

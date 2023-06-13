@@ -318,14 +318,15 @@ class PostController extends ApiController
                 return $this->ErrorResponse('Invalid post id provided. Please enter valid post id.', null, null);
             }
 
-            $post = Post::where('id', $request->post_id)->whereNotIn('user_id', $deactivatedUsersIds)->with('comments.childrenComments')
+            $post = Post::where('id', $request->post_id)->whereNotIn('user_id', $deactivatedUsersIds)->with(['user','comments.childrenComments', 'comments.user'])
                 ->with([
                     'comments.childrenComments' => function ($query) use ($blocked_user_ids, $deactivatedUsersIds) {
                         $query->whereNotIn('comments.user_id', $deactivatedUsersIds);
                         $query->whereNotIn('comments.user_id', $blocked_user_ids);
                         $query->whereNotIn('childrenComments.user_id', $deactivatedUsersIds);
                         $query->whereNotIn('childrenComments.user_id', $blocked_user_ids);
-                    }
+                        
+                    }, 
                 ])->first();
 
             return $this->SuccessResponse($this->dataRetrieved, [
