@@ -92,6 +92,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
             Route::post('add-participant', [GroupController::class, 'addParticipant']);
             Route::post('leave', [GroupController::class, 'leave']);
             Route::get('search', [GroupController::class, 'search']);
+            Route::delete('delete', [GroupController::class, 'destroy']);
         });
 
         /*
