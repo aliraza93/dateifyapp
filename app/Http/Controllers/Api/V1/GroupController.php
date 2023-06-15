@@ -16,7 +16,7 @@ class GroupController extends ApiController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'name' => 'required|string|unique:groups',
             'image' => 'required'
         ]);
 
