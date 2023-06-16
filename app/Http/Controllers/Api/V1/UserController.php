@@ -59,11 +59,11 @@ class UserController extends ApiController
                 $user->name = $request->name;
             }
 
-            if ($request->username) {
+            if ($request->username != $user->username) {
                 $old_username = User::where('username', $request->username)->first();
                 if ($old_username) {
                     $suggestions = $this->generateUsernameSuggestions($request->username); // Generate 3 different username suggestions
-                    return $this->ErrorResponse('Username already taken please choose a unique Username', $suggestions, null);
+                    return $this->ErrorResponse('Username is already taken please choose a unique username', $suggestions, null);
                 } else {
                     $user->username = $request->username;
                 }
