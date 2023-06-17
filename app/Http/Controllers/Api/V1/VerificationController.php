@@ -18,6 +18,7 @@ class VerificationController extends ApiController
             'image'             => 'required|image|mimes:jpeg,png,jpg,gif',
             'image_tag'         => 'required|string',
             'previous_image_id' => 'nullable',
+            'user_id'           => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -25,7 +26,12 @@ class VerificationController extends ApiController
         }
 
         try {
-            $user = User::find(Auth::id())->append('VerificationImages');
+            $user = User::where('id', $request->user_id)->first();
+            if (!$user) {
+                return $this->ErrorResponse('Invalid user id provided. Please enter valid user id.', null, null);
+            }
+            $user = $user->append('VerificationImages');
+            // $user = User::find(Auth::id())->append('VerificationImages');
             if (count($user->VerificationImages) >= 2) {
                 foreach ($user->VerificationImages as $image) {
                     if ($image['image_tag'] == $request->image_tag) {
