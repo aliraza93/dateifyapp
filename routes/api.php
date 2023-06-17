@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\PostLikesController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\VerificationController;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -49,6 +50,13 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
 
     Route::post('login', [AuthController::class, 'login']);
     Route::post('validate-login-otp', [AuthController::class, 'validateLoginOtp']);
+
+    //Verification Api's
+    Route::prefix('verification')->group(function () {
+
+        //upload image
+        Route::post('upload-image', [VerificationController::class, 'verificationImage']);
+    });
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);

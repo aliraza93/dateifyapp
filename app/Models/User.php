@@ -131,6 +131,19 @@ class User extends Authenticatable implements HasMedia
         return $images;
     }
 
+    // Get id and link of images
+    public function getVerificationImagesAttribute()
+    {
+
+        $images = [];
+        if ($this->getMedia('verification_images')) {
+            foreach ($this->getMedia('verification_images') as $key => $media) {
+                $images[$key] = ['id' => $media->id, 'url' => $media->getUrl(), 'image_tag' => $media->custom_properties['image_tag']];
+            }
+        }
+        return $images;
+    }
+
     public function groups()
     {
         return $this->belongsToMany(Group::class, 'group_users');
@@ -139,6 +152,11 @@ class User extends Authenticatable implements HasMedia
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function postLikes()
@@ -173,5 +191,13 @@ class User extends Authenticatable implements HasMedia
     public function notificationSettings()
     {
         return $this->hasOne(UserNotificationSettings::class);
+    }
+
+    /*
+        Verification
+    */
+    public function verification()
+    {
+        return $this->hasOne(Verification::class);
     }
 }
