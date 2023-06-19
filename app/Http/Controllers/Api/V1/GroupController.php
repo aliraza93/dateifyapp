@@ -46,6 +46,9 @@ class GroupController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+    public function add_testing_group(){
+        
+    }
 
     public function addParticipant(Request $request)
     {
