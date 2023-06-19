@@ -61,6 +61,11 @@
                 <input type="text" id="image_name" name="image_name" placeholder="Enter Image name" required>
             </div>
             <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" id="state" name="state" placeholder="State" required>
+            </div>
+            
+            <div class="form-group">
                 <label for="image_url">Image URL:</label>
                 <input type="text" id="image_url" name="image_url" placeholder="Enter Image URL" required>
             </div>
