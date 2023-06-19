@@ -95,7 +95,7 @@ class CommentController extends ApiController
             if (!$post) {
                 return $this->ErrorResponse('No post record found in our database. Please try again', null, null);
             }
-            
+
             $post_owner = User::find($post->user_id);
             $comment = new Comment();
             $comment->body = $request->body;
@@ -118,14 +118,13 @@ class CommentController extends ApiController
                 if ($post_owner->notificationSettings != null && $post_owner->notificationSettings->in_app_notifications && $post_owner->notificationSettings->posts_notifications) {
                     $post_owner->notify(new UserNotify($user, 'commented on your post', 'post_comment', $post->id, Group::find($post->group_id)));
                 }
-                
             }
 
             $likes_count = PostLike::where(['is_liked' => 1, 'post_id' => $post->id])->count();
             $dislikes_count = PostLike::where(['is_liked' => 0, 'post_id' => $post->id])->count();
             $total_reacts = PostLike::where('post_id', $post->id)->count();
             $comments_count = $post->comments->count();
-            
+
             broadcast(new PostReactCounts($post, $user, $likes_count, $dislikes_count, $total_reacts, $comments_count, Group::find($post->group_id)))->toOthers();
 
             $this->sendPushNotification($post_owner, 'New Comment', $user->name . 'Commented on your post',  $user->avatar, 'new_comment', $user->id, $post->id, $post->group_id);
@@ -309,9 +308,10 @@ class CommentController extends ApiController
                 }
             ])
             ->latest()->paginate($limit);
-
+        $total_comments_count = $user->comments->count();
         return $this->SuccessResponse($this->dataRetrieved, [
-            'groups' => $groups
+            'groups' => $groups,
+            'total_comments_count' => $total_comments_count
         ]);
     }
 

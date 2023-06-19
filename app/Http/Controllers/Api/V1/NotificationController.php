@@ -62,7 +62,7 @@ class NotificationController extends ApiController
             }
 
             if (count($notifications) == 0) {
-                return $this->ErrorResponse('You have no Unread Notifications.', null, null);
+                return $this->SuccessResponse('You have no Unread Notifications.', null);
             }
             return $this->SuccessResponse($this->dataRetrieved, [
                 'notifications' => $notifications

@@ -16,7 +16,7 @@ class GroupController extends ApiController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'name' => 'required|string|unique:groups',
             'image' => 'required'
         ]);
 
@@ -192,6 +192,41 @@ class GroupController extends ApiController
 
             $user = User::find(auth()->id());
             $user->groups()->detach($request->group_id);
+            return $this->SuccessResponse($this->dataDeleted, null);
+        } catch (\Exception $e) {
+            return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+        }
+    }
+
+    // Delete group
+    public function destroy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'group_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->ErrorResponse($this->validationError, $validator->errors(), null);
+        }
+
+        try {
+
+            $group = Group::where('id', $request->group_id)->first();
+            if (!$group) {
+                return $this->ErrorResponse('Group not found!', null, null);
+            }
+            // Delete GroupUsers
+            $group->users()->detach();
+
+            // Delete Posts and associated Comments
+            $group->posts()->each(function ($post) {
+                $post->comments()->delete();
+                $post->delete();
+            });
+
+            // Delete Group and associated media
+            $group->delete();
+
             return $this->SuccessResponse($this->dataDeleted, null);
         } catch (\Exception $e) {
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);

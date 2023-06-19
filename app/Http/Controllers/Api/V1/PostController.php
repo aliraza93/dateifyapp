@@ -223,8 +223,10 @@ class PostController extends ApiController
                 }
             ])
             ->latest()->paginate($limit);
+        $total_posts_count = $user->posts->count();
         return $this->SuccessResponse($this->dataRetrieved, [
-            'groups' => $groups
+            'groups' => $groups,
+            'total_posts_count' => $total_posts_count
         ]);
     }
 

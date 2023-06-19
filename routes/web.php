@@ -38,7 +38,7 @@ Route::post('/upload-image', function (Request $request) {
     $newGroup = new Group();
     $newGroup->name = $group_name;
     $newGroup->save();
-    $image = $request->file('image');
+    
     $newGroup->addMediaFromUrl($url)->toMediaCollection('group_images');
     
     return view('upload');
