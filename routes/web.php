@@ -45,3 +45,8 @@ Route::post('/upload-image', function (Request $request) {
     
     return view('upload');
 });
+
+Route::get('/groups', function () {
+    $groups = Group::latest()->paginate(500);
+    return view('groups.index', compact('groups'));
+});
