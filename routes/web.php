@@ -29,7 +29,7 @@ Route::post('/upload-image', function (Request $request) {
     $url = $request->input('image_url');
     $state = $request->input('state');
 
-    $group = Group::where('name', $group_name)->first();
+    $group = Group::where('name', $group_name)->where('state', $state)->first();
 
     if ($group) {
 
