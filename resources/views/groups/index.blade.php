@@ -81,8 +81,14 @@
                 <img src="{{ $group->avatar }}" alt="">
             </li>
         </ul>
+        <form action="/groups/{{ $group->id }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit">Delete</button>
+        </form>
+        <a href="/groups/{{ $group->id }}/edit">Edit</a>
     </div>
-@endforeach
+    @endforeach
 
 <div class="pagination">
     {{ $groups->links() }}
