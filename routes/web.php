@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\GroupController;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -50,6 +51,6 @@ Route::get('/groups', function () {
     $groups = Group::latest()->paginate(500);
     return view('groups.index', compact('groups'));
 });
-// Route::delete('/groups/{id}', [GroupController::class, 'destroy']);
-// Route::get('/groups/{id}/edit', [GroupController::class, 'edit']);
-// Route::patch('/groups/{id}', [GroupController::class, 'update']);
+Route::delete('/groups/{id}', [GroupController::class, 'destroy_web']);
+Route::get('/groups/{id}/edit', [GroupController::class, 'edit_web']);
+Route::patch('/groups/{id}', [GroupController::class, 'update_web']);
