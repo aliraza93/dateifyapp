@@ -254,11 +254,14 @@ class GroupController extends ApiController
 
         $group->name = $request->input('name');
         $group->state = $request->input('state');
+        $group->save();
         $url = $request->input('url');
         // Update other properties as needed
-        $group->addMediaFromUrl($url)->toMediaCollection('group_images');
+        if($url != null) {
+            $group->addMediaFromUrl($url)->toMediaCollection('group_images');
 
-        $group->save();
+        }
+
 
         return redirect()->back()->with('success', 'Group updated successfully.');
     }
