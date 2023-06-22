@@ -76,7 +76,7 @@
     
     @foreach($groups as $group)
         <div class="group">
-            <h2>{{ $group->id }} : {{ $group->name }}</h2>
+            <h2>{{ $group->id }} : {{ $group->name }}, {{ $group->name }}</h2>
             <ul>
                 <li>
                     <img src="{{ $group->avatar }}" alt="">
