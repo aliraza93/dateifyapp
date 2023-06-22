@@ -47,6 +47,12 @@ class VerificationController extends ApiController
                 $mediaItems->save();
             }
 
+            // create verification record
+            $verification = new Verification();
+            $verification->verification_status = 'pending';
+            $verification->user_id = $user->id;
+            $verification->save();
+
             return $this->SuccessResponse($this->dataUpdated, [
                 'id'    => $mediaItems->id,
                 'image_tag'    => $mediaItems->custom_properties['image_tag'],
