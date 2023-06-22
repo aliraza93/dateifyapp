@@ -232,4 +232,35 @@ class GroupController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
+
+    public function destroy_web($id)
+    {
+        $group = Group::findOrFail($id);
+        $group->delete();
+
+        return redirect()->back()->with('success', 'Group deleted successfully.');
+    }
+
+    public function edit_web($id)
+    {
+        $group = Group::findOrFail($id);
+
+        return view('groups.edit', compact('group'));
+    }
+
+    public function update_web(Request $request, $id)
+    {
+        $group = Group::findOrFail($id);
+
+        $group->name = $request->input('name');
+        $group->state = $request->input('state');
+        $url = $request->input('url');
+        // Update other properties as needed
+        $group->addMediaFromUrl($url)->toMediaCollection('group_images');
+
+        $group->save();
+
+        return redirect()->back()->with('success', 'Group updated successfully.');
+    }
+
 }
