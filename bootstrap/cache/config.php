@@ -4,7 +4,7 @@
     'name' => 'Dateifyapp',
     'env' => 'local',
     'debug' => true,
-    'url' => 'http://localhost',
+    'url' => 'https://dsecf6rzqotcd.cloudfront.net',
     'asset_url' => NULL,
     'timezone' => 'UTC',
     'locale' => 'en',
@@ -132,19 +132,19 @@
   ),
   'broadcasting' => 
   array (
-    'default' => 'pusher',
+    'default' => 'log',
     'connections' => 
     array (
       'pusher' => 
       array (
         'driver' => 'pusher',
-        'key' => '5c13172fdbdcd18c24eb',
-        'secret' => '5a562a0991ccbade719f',
-        'app_id' => '1600221',
+        'key' => '',
+        'secret' => '',
+        'app_id' => '',
         'options' => 
         array (
-          'host' => 'api-ap2.pusher.com',
-          'port' => 443,
+          'host' => 'api-mt1.pusher.com',
+          'port' => '443',
           'scheme' => 'https',
           'encrypted' => true,
           'useTLS' => true,
@@ -197,7 +197,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework/cache/data',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -280,7 +280,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'dateifyapp',
+        'database' => 'dateifyapp-local',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -288,11 +288,11 @@
       array (
         'driver' => 'mysql',
         'url' => NULL,
-        'host' => 'dateifyapp.cj3aw4aygvcs.us-east-1.rds.amazonaws.com',
+        'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dateifyapp',
-        'username' => 'dateifyapp',
-        'password' => 'd066ADPYnhWfbC1VLm8a',
+        'database' => 'dateifyapp-local',
+        'username' => 'root',
+        'password' => '',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -308,11 +308,11 @@
       array (
         'driver' => 'pgsql',
         'url' => NULL,
-        'host' => 'dateifyapp.cj3aw4aygvcs.us-east-1.rds.amazonaws.com',
+        'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dateifyapp',
-        'username' => 'dateifyapp',
-        'password' => 'd066ADPYnhWfbC1VLm8a',
+        'database' => 'dateifyapp-local',
+        'username' => 'root',
+        'password' => '',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -323,11 +323,11 @@
       array (
         'driver' => 'sqlsrv',
         'url' => NULL,
-        'host' => 'dateifyapp.cj3aw4aygvcs.us-east-1.rds.amazonaws.com',
+        'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dateifyapp',
-        'username' => 'dateifyapp',
-        'password' => 'd066ADPYnhWfbC1VLm8a',
+        'database' => 'dateifyapp-local',
+        'username' => 'root',
+        'password' => '',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -370,14 +370,14 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app',
+        'root' => '/Applications/ApplisGroup/dateifyapp/storage/app',
         'throw' => false,
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app/public',
-        'url' => 'http://localhost/storage',
+        'root' => '/Applications/ApplisGroup/dateifyapp/storage/app/public',
+        'url' => 'https://dsecf6rzqotcd.cloudfront.net/storage',
         'visibility' => 'public',
         'throw' => false,
       ),
@@ -397,7 +397,7 @@
     ),
     'links' => 
     array (
-      'C:\\xampp\\htdocs\\dateifyapp\\public\\storage' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app/public',
+      '/Applications/ApplisGroup/dateifyapp/public/storage' => '/Applications/ApplisGroup/dateifyapp/storage/app/public',
     ),
   ),
   'hashing' => 
@@ -436,14 +436,14 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\logs/laravel.log',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/logs/laravel.log',
         'level' => 'debug',
         'replace_placeholders' => true,
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\logs/laravel.log',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
         'replace_placeholders' => true,
@@ -508,7 +508,7 @@
       ),
       'emergency' => 
       array (
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\logs/laravel.log',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -574,7 +574,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\xampp\\htdocs\\dateifyapp\\resources\\views/vendor/mail',
+        0 => '/Applications/ApplisGroup/dateifyapp/resources/views/vendor/mail',
       ),
     ),
   ),
@@ -741,7 +741,7 @@
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'localhost',
+      5 => 'dsecf6rzqotcd.cloudfront.net',
     ),
     'guard' => 
     array (
@@ -780,7 +780,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework/sessions',
+    'files' => '/Applications/ApplisGroup/dateifyapp/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -800,9 +800,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\xampp\\htdocs\\dateifyapp\\resources\\views',
+      0 => '/Applications/ApplisGroup/dateifyapp/resources/views',
     ),
-    'compiled' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework\\views',
+    'compiled' => '/Applications/ApplisGroup/dateifyapp/storage/framework/views',
   ),
   'image' => 
   array (
@@ -882,7 +882,7 @@
     array (
     ),
     'enable_runnable_solutions' => NULL,
-    'remote_sites_path' => 'C:\\xampp\\htdocs\\dateifyapp',
+    'remote_sites_path' => '/Applications/ApplisGroup/dateifyapp',
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
     'settings_file_path' => '',
