@@ -96,7 +96,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
         */
         Route::prefix('groups')->group(function () {
             Route::get('/', [GroupController::class, 'list']);
-            Route::get('/testing', [GroupController::class, 'add_testing_group']);
             Route::post('create', [GroupController::class, 'store']);
             Route::post('add-participant', [GroupController::class, 'addParticipant']);
             Route::post('leave', [GroupController::class, 'leave']);
