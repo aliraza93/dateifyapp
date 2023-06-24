@@ -204,7 +204,7 @@ class AuthController extends ApiController
             }
             $user = User::where('phone', $request->phone)->select('id', 'name', 'username', 'phone', 'dob', 'gender')->first();
             // $user = Auth::user();
-            if ($request->phone == "+19007860786" && $request->otp == "1234") {
+            if ($request->phone == "+19007860107" && $request->otp == "1234") {
                 $user = $this->loginDetails($user->id);
             } else {
 
@@ -253,7 +253,7 @@ class AuthController extends ApiController
             if (!$user) {
                 return $this->ErrorResponse('Oops! Seems like you have entered a number that is not associated with any account.', null, null);
             }
-            if ($request->phone == '+19007860786') {
+            if ($request->phone == '+19007860107') {
                 $otp = 1234;
                 return $this->SuccessResponse('OTP Generated', [
                     'otp' => $otp,
