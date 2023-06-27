@@ -259,8 +259,13 @@ class GroupController extends ApiController
 
         }
 
-
-        return redirect()->back()->with('success', 'Group updated successfully.');
+        $newId = $id+1;
+        $group = Group::findOrFail($newId);
+        while(!$group){
+        $newId++;
+        $group = Group::findOrFail($newId);
+        }
+        return view('groups.edit', compact('group'));
     }
 
 }
