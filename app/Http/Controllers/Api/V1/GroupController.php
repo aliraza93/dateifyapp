@@ -46,10 +46,7 @@ class GroupController extends ApiController
             return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
         }
     }
-    public function add_testing_group(){
-        
-    }
-
+    
     public function addParticipant(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -262,8 +259,13 @@ class GroupController extends ApiController
 
         }
 
-
-        return redirect()->back()->with('success', 'Group updated successfully.');
+        $newId = $id+1;
+        $group = Group::findOrFail($newId);
+        while(!$group){
+        $newId++;
+        $group = Group::findOrFail($newId);
+        }
+        return view('groups.edit', compact('group'));
     }
 
 }
