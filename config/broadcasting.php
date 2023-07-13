@@ -39,18 +39,9 @@ return [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'useTLS' => true,
                 'encrypted' => true,
-<<<<<<< HEAD
                 'host' => 'https://api.dateifyapp.com/',
                 'port' => 6001,
                 'scheme' => 'http'
-=======
-                'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
-                // 'encrypted' => true,
-                'host'  =>  '127.0.0.1',
-                'port'  =>  '6001',
-                'schema' => 'http',
-
->>>>>>> 44d80380ac02f408a537499793092f7295fdcc3d
             ],
             'client_options' => [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
