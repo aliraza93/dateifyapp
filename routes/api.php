@@ -37,7 +37,7 @@ Route::fallback([ApiController::class, 'fallbackResponse']);
 Route::group(['prefix' => 'v1', 'namespace' => 'Api\V1'], function () {
 
     // Test push notification
-    Route::get('test-push-notification', [NotificationController::class, 'testPushNotification']);
+    Route::get('test-push-notification', [GroupController::class, 'updategroups']);
     /*
     |--------------------------------------------------------------------------
     | Authentication Routes

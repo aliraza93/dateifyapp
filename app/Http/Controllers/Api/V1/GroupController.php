@@ -268,4 +268,20 @@ class GroupController extends ApiController
         return view('groups.edit', compact('group'));
     }
 
+    public function updategroups()
+    {
+     try{
+        for($i = 265; $i<289; $i++){
+            $group = Group::find($i);
+            if($group){
+                $group->state = 'AR';
+                $group->save();
+            }
+
+        }
+    } catch (\Exception $e) {
+        return $this->ErrorResponse($this->jsonException, $e->getMessage(), null);
+    }
+    }
+
 }
