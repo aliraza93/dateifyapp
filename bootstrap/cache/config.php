@@ -1,16 +1,16 @@
 <?php return array (
   'app' => 
   array (
-    'name' => 'Dateifyapp',
+    'name' => 'Dateify',
     'env' => 'local',
     'debug' => true,
-    'url' => 'http://localhost',
+    'url' => 'https://dsecf6rzqotcd.cloudfront.net',
     'asset_url' => NULL,
     'timezone' => 'UTC',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
-    'key' => 'base64:UOrK0O7ytIO6UEFShp6YbhtGRC2P/BLdPHzL1Vt9nBI=',
+    'key' => 'base64:B1jt8Kb40JPHkkp3Xp22f364BNMZ+gg3nSs/kDR9OwU=',
     'cipher' => 'AES-256-CBC',
     'maintenance' => 
     array (
@@ -143,11 +143,12 @@
         'app_id' => '1600221',
         'options' => 
         array (
-          'host' => 'api-ap2.pusher.com',
-          'port' => 443,
+          'host' => '127.0.0.1',
+          'port' => '6001',
           'scheme' => 'https',
           'encrypted' => true,
           'useTLS' => true,
+          'schema' => 'http',
         ),
         'client_options' => 
         array (
@@ -230,8 +231,8 @@
       'dynamodb' => 
       array (
         'driver' => 'dynamodb',
-        'key' => 'AKIAVEGLEOOW7F3EYBDZ',
-        'secret' => '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',
+        'key' => 'AKIAZZUL22JG22FSLE7M',
+        'secret' => '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',
         'region' => 'us-east-1',
         'table' => 'cache',
         'endpoint' => NULL,
@@ -241,7 +242,7 @@
         'driver' => 'octane',
       ),
     ),
-    'prefix' => 'dateifyapp_cache_',
+    'prefix' => 'dateify_cache_',
   ),
   'cors' => 
   array (
@@ -280,7 +281,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'dateifyapp',
+        'database' => 'local-dateify',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -288,11 +289,11 @@
       array (
         'driver' => 'mysql',
         'url' => NULL,
-        'host' => 'dateifyapp.cj3aw4aygvcs.us-east-1.rds.amazonaws.com',
+        'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dateifyapp',
-        'username' => 'dateifyapp',
-        'password' => 'd066ADPYnhWfbC1VLm8a',
+        'database' => 'local-dateify',
+        'username' => 'root',
+        'password' => '',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -308,11 +309,11 @@
       array (
         'driver' => 'pgsql',
         'url' => NULL,
-        'host' => 'dateifyapp.cj3aw4aygvcs.us-east-1.rds.amazonaws.com',
+        'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dateifyapp',
-        'username' => 'dateifyapp',
-        'password' => 'd066ADPYnhWfbC1VLm8a',
+        'database' => 'local-dateify',
+        'username' => 'root',
+        'password' => '',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -323,11 +324,11 @@
       array (
         'driver' => 'sqlsrv',
         'url' => NULL,
-        'host' => 'dateifyapp.cj3aw4aygvcs.us-east-1.rds.amazonaws.com',
+        'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'dateifyapp',
-        'username' => 'dateifyapp',
-        'password' => 'd066ADPYnhWfbC1VLm8a',
+        'database' => 'local-dateify',
+        'username' => 'root',
+        'password' => '',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -340,7 +341,7 @@
       'options' => 
       array (
         'cluster' => 'redis',
-        'prefix' => 'dateifyapp_database_',
+        'prefix' => 'dateify_database_',
       ),
       'default' => 
       array (
@@ -377,18 +378,18 @@
       array (
         'driver' => 'local',
         'root' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app/public',
-        'url' => 'http://localhost/storage',
+        'url' => 'https://dsecf6rzqotcd.cloudfront.net/storage',
         'visibility' => 'public',
         'throw' => false,
       ),
       's3' => 
       array (
         'driver' => 's3',
-        'key' => 'AKIAVEGLEOOW7F3EYBDZ',
-        'secret' => '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',
+        'key' => 'AKIAZZUL22JG22FSLE7M',
+        'secret' => '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',
         'region' => 'us-east-1',
-        'bucket' => 'dateifyapp',
-        'url' => 'https://dsecf6rzqotcd.cloudfront.net',
+        'bucket' => 'dateify-app',
+        'url' => 'https://d1vjox3dwbpbxy.cloudfront.net',
         'endpoint' => NULL,
         'use_path_style_endpoint' => false,
         'throw' => false,
@@ -416,7 +417,7 @@
   ),
   'logging' => 
   array (
-    'default' => 'stack',
+    'default' => 'single',
     'deprecations' => 
     array (
       'channel' => NULL,
@@ -520,7 +521,7 @@
       'smtp' => 
       array (
         'transport' => 'smtp',
-        'host' => 'mailpit',
+        'host' => 'mailhog',
         'port' => '1025',
         'encryption' => NULL,
         'username' => NULL,
@@ -567,7 +568,7 @@
     'from' => 
     array (
       'address' => 'hello@example.com',
-      'name' => 'Dateifyapp',
+      'name' => 'Dateify',
     ),
     'markdown' => 
     array (
@@ -707,8 +708,8 @@
       'sqs' => 
       array (
         'driver' => 'sqs',
-        'key' => 'AKIAVEGLEOOW7F3EYBDZ',
-        'secret' => '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',
+        'key' => 'AKIAZZUL22JG22FSLE7M',
+        'secret' => 'JjrREy2Hy+pQ991FaQHzYdqLgnpw2i4Clq1AwHOw',
         'prefix' => 'https://sqs.us-east-1.amazonaws.com/your-account-id',
         'queue' => 'default',
         'suffix' => NULL,
@@ -741,7 +742,7 @@
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'localhost',
+      5 => 'dsecf6rzqotcd.cloudfront.net',
     ),
     'guard' => 
     array (
@@ -769,8 +770,8 @@
     ),
     'ses' => 
     array (
-      'key' => 'AKIAVEGLEOOW7F3EYBDZ',
-      'secret' => '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',
+      'key' => 'AKIAZZUL22JG22FSLE7M',
+      'secret' => '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',
       'region' => 'us-east-1',
     ),
   ),
@@ -789,7 +790,7 @@
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'dateifyapp_session',
+    'cookie' => 'dateify_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => NULL,
@@ -803,6 +804,53 @@
       0 => 'C:\\xampp\\htdocs\\dateifyapp\\resources\\views',
     ),
     'compiled' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework\\views',
+  ),
+  'websockets' => 
+  array (
+    'dashboard' => 
+    array (
+      'port' => 6001,
+    ),
+    'apps' => 
+    array (
+      0 => 
+      array (
+        'id' => '1600221',
+        'name' => 'Dateify',
+        'key' => '5c13172fdbdcd18c24eb',
+        'secret' => '5a562a0991ccbade719f',
+        'path' => NULL,
+        'capacity' => NULL,
+        'enable_client_messages' => false,
+        'enable_statistics' => true,
+      ),
+    ),
+    'app_provider' => 'BeyondCode\\LaravelWebSockets\\Apps\\ConfigAppProvider',
+    'allowed_origins' => 
+    array (
+    ),
+    'max_request_size_in_kb' => 250,
+    'path' => 'laravel-websockets',
+    'middleware' => 
+    array (
+      0 => 'web',
+      1 => 'BeyondCode\\LaravelWebSockets\\Dashboard\\Http\\Middleware\\Authorize',
+    ),
+    'statistics' => 
+    array (
+      'model' => 'BeyondCode\\LaravelWebSockets\\Statistics\\Models\\WebSocketsStatisticsEntry',
+      'logger' => 'BeyondCode\\LaravelWebSockets\\Statistics\\Logger\\HttpStatisticsLogger',
+      'interval_in_seconds' => 60,
+      'delete_statistics_older_than_days' => 60,
+      'perform_dns_lookup' => false,
+    ),
+    'ssl' => 
+    array (
+      'local_cert' => NULL,
+      'local_pk' => NULL,
+      'passphrase' => NULL,
+    ),
+    'channel_manager' => 'BeyondCode\\LaravelWebSockets\\WebSockets\\Channels\\ChannelManagers\\ArrayChannelManager',
   ),
   'image' => 
   array (
