@@ -1,16 +1,16 @@
 <?php return array (
   'app' => 
   array (
-    'name' => 'Dateify',
+    'name' => 'Dateifyapp',
     'env' => 'local',
     'debug' => true,
-    'url' => 'https://dsecf6rzqotcd.cloudfront.net',
+    'url' => 'https://d1vjox3dwbpbxy.cloudfront.net',
     'asset_url' => NULL,
     'timezone' => 'UTC',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
-    'key' => 'base64:B1jt8Kb40JPHkkp3Xp22f364BNMZ+gg3nSs/kDR9OwU=',
+    'key' => 'base64:UOrK0O7ytIO6UEFShp6YbhtGRC2P/BLdPHzL1Vt9nBI=',
     'cipher' => 'AES-256-CBC',
     'maintenance' => 
     array (
@@ -132,15 +132,15 @@
   ),
   'broadcasting' => 
   array (
-    'default' => 'pusher',
+    'default' => 'log',
     'connections' => 
     array (
       'pusher' => 
       array (
         'driver' => 'pusher',
-        'key' => '5c13172fdbdcd18c24eb',
-        'secret' => '5a562a0991ccbade719f',
-        'app_id' => '1600221',
+        'key' => '',
+        'secret' => '',
+        'app_id' => '',
         'options' => 
         array (
           'host' => '127.0.0.1',
@@ -198,7 +198,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework/cache/data',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -242,7 +242,7 @@
         'driver' => 'octane',
       ),
     ),
-    'prefix' => 'dateify_cache_',
+    'prefix' => 'dateifyapp_cache_',
   ),
   'cors' => 
   array (
@@ -281,7 +281,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'local-dateify',
+        'database' => 'dateifyapp-local',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -291,7 +291,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'local-dateify',
+        'database' => 'dateifyapp-local',
         'username' => 'root',
         'password' => '',
         'unix_socket' => '',
@@ -311,7 +311,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'local-dateify',
+        'database' => 'dateifyapp-local',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8',
@@ -326,7 +326,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'local-dateify',
+        'database' => 'dateifyapp-local',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8',
@@ -341,7 +341,7 @@
       'options' => 
       array (
         'cluster' => 'redis',
-        'prefix' => 'dateify_database_',
+        'prefix' => 'dateifyapp_database_',
       ),
       'default' => 
       array (
@@ -371,14 +371,14 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app',
+        'root' => '/Applications/ApplisGroup/dateifyapp/storage/app',
         'throw' => false,
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app/public',
-        'url' => 'https://dsecf6rzqotcd.cloudfront.net/storage',
+        'root' => '/Applications/ApplisGroup/dateifyapp/storage/app/public',
+        'url' => 'https://d1vjox3dwbpbxy.cloudfront.net/storage',
         'visibility' => 'public',
         'throw' => false,
       ),
@@ -398,7 +398,7 @@
     ),
     'links' => 
     array (
-      'C:\\xampp\\htdocs\\dateifyapp\\public\\storage' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\app/public',
+      '/Applications/ApplisGroup/dateifyapp/public/storage' => '/Applications/ApplisGroup/dateifyapp/storage/app/public',
     ),
   ),
   'hashing' => 
@@ -417,7 +417,7 @@
   ),
   'logging' => 
   array (
-    'default' => 'single',
+    'default' => 'stack',
     'deprecations' => 
     array (
       'channel' => NULL,
@@ -437,14 +437,14 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\logs/laravel.log',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/logs/laravel.log',
         'level' => 'debug',
         'replace_placeholders' => true,
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\logs/laravel.log',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
         'replace_placeholders' => true,
@@ -509,7 +509,7 @@
       ),
       'emergency' => 
       array (
-        'path' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\logs/laravel.log',
+        'path' => '/Applications/ApplisGroup/dateifyapp/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -521,7 +521,7 @@
       'smtp' => 
       array (
         'transport' => 'smtp',
-        'host' => 'mailhog',
+        'host' => 'mailpit',
         'port' => '1025',
         'encryption' => NULL,
         'username' => NULL,
@@ -568,14 +568,14 @@
     'from' => 
     array (
       'address' => 'hello@example.com',
-      'name' => 'Dateify',
+      'name' => 'Dateifyapp',
     ),
     'markdown' => 
     array (
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\xampp\\htdocs\\dateifyapp\\resources\\views/vendor/mail',
+        0 => '/Applications/ApplisGroup/dateifyapp/resources/views/vendor/mail',
       ),
     ),
   ),
@@ -742,7 +742,7 @@
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'dsecf6rzqotcd.cloudfront.net',
+      5 => 'd1vjox3dwbpbxy.cloudfront.net',
     ),
     'guard' => 
     array (
@@ -781,7 +781,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework/sessions',
+    'files' => '/Applications/ApplisGroup/dateifyapp/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -790,7 +790,7 @@
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'dateify_session',
+    'cookie' => 'dateifyapp_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => NULL,
@@ -801,9 +801,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\xampp\\htdocs\\dateifyapp\\resources\\views',
+      0 => '/Applications/ApplisGroup/dateifyapp/resources/views',
     ),
-    'compiled' => 'C:\\xampp\\htdocs\\dateifyapp\\storage\\framework\\views',
+    'compiled' => '/Applications/ApplisGroup/dateifyapp/storage/framework/views',
   ),
   'websockets' => 
   array (
@@ -815,10 +815,10 @@
     array (
       0 => 
       array (
-        'id' => '1600221',
-        'name' => 'Dateify',
-        'key' => '5c13172fdbdcd18c24eb',
-        'secret' => '5a562a0991ccbade719f',
+        'id' => '',
+        'name' => 'Dateifyapp',
+        'key' => '',
+        'secret' => '',
         'path' => NULL,
         'capacity' => NULL,
         'enable_client_messages' => false,
@@ -930,7 +930,7 @@
     array (
     ),
     'enable_runnable_solutions' => NULL,
-    'remote_sites_path' => 'C:\\xampp\\htdocs\\dateifyapp',
+    'remote_sites_path' => '/Applications/ApplisGroup/dateifyapp',
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
     'settings_file_path' => '',
@@ -942,6 +942,21 @@
       3 => 'Spatie\\LaravelIgnition\\Recorders\\QueryRecorder\\QueryRecorder',
     ),
     'open_ai_key' => NULL,
+    'with_stack_frame_arguments' => true,
+    'argument_reducers' => 
+    array (
+      0 => 'Spatie\\Backtrace\\Arguments\\Reducers\\BaseTypeArgumentReducer',
+      1 => 'Spatie\\Backtrace\\Arguments\\Reducers\\ArrayArgumentReducer',
+      2 => 'Spatie\\Backtrace\\Arguments\\Reducers\\StdClassArgumentReducer',
+      3 => 'Spatie\\Backtrace\\Arguments\\Reducers\\EnumArgumentReducer',
+      4 => 'Spatie\\Backtrace\\Arguments\\Reducers\\ClosureArgumentReducer',
+      5 => 'Spatie\\Backtrace\\Arguments\\Reducers\\DateTimeArgumentReducer',
+      6 => 'Spatie\\Backtrace\\Arguments\\Reducers\\DateTimeZoneArgumentReducer',
+      7 => 'Spatie\\Backtrace\\Arguments\\Reducers\\SymphonyRequestArgumentReducer',
+      8 => 'Spatie\\LaravelIgnition\\ArgumentReducers\\ModelArgumentReducer',
+      9 => 'Spatie\\LaravelIgnition\\ArgumentReducers\\CollectionArgumentReducer',
+      10 => 'Spatie\\Backtrace\\Arguments\\Reducers\\StringableArgumentReducer',
+    ),
   ),
   'tinker' => 
   array (
