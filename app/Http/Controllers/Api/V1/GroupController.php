@@ -95,7 +95,7 @@ class GroupController extends ApiController
         try {
             $limit = $request->limit ? $request->limit : 20;
             $user = User::find(auth()->id());
-            $groups = $user->groups()->paginate($limit);
+            $groups = $user->groups()->orderBy('name', 'asc')->paginate($limit);
             return $this->SuccessResponse($this->dataRetrieved, [
                 'groups' => $groups
             ]);
